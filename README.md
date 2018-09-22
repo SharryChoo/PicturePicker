@@ -18,10 +18,11 @@ Add it in your **module build.gradle** at the end of repositories
 ```
 dependencies {
     ...
-    implementation 'com.github.SharryChoo:PicturePicker:1.1.+'
-    implementation 'com.android.support:appcompat-v7:27.+'
-    implementation 'com.android.support:design:27.+'
-    implementation 'com.android.support:recyclerview-v7:27.+'
+    implementation 'com.github.SharryChoo:PicturePicker:+'
+    // Dependencies
+    implementation "androidx.appcompat:appcompat:$supportLibraryVersion"
+    implementation "androidx.recyclerview:recyclerview:$supportLibraryVersion"
+    implementation "com.google.android.material:material:$supportLibraryVersion"
 }
 ```
 
@@ -44,7 +45,8 @@ dependencies {
 PicturePickerManager.with(this)
     .setThreshold(etAlbumThreshold.text.toString().toInt())// 一共选中的数量
     .setSpanCount(etSpanCount.text.toString().toInt())// 每行展示的数目
-    .isShowScrollBehavior(checkboxAnimation.isChecked)// Behavior 动画
+    .isToolbarScrollable(checkboxAnimation.isChecked)// Behavior 动画
+    .isFabScrollable(checkboxAnimation.isChecked)// 悬浮按钮动画
     .setToolbarBackgroundColorRes(R.color.colorPrimary) // Toolbar 背景设置
     .setIndicatorSolidColorRes(R.color.colorPrimary)// 选中指示器的颜色
     .setIndicatorBorderColorRes(R.color.colorPrimary, android.R.color.white)// 指示器边界的颜色

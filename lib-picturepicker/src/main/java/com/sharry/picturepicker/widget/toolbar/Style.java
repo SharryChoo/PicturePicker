@@ -6,8 +6,6 @@ package com.sharry.picturepicker.widget.toolbar;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/9/22 18:31
- * <p>
- * {@hide}
  */
 public enum Style {
     TRANSPARENT,

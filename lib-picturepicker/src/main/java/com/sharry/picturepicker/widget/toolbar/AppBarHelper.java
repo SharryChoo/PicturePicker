@@ -17,7 +17,6 @@ import java.lang.ref.SoftReference;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2017/10/14 16:26
- * {@hide}
  */
 public class AppBarHelper {
 

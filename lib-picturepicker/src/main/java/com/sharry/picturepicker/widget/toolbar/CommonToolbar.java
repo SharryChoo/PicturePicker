@@ -36,8 +36,6 @@ import androidx.core.content.ContextCompat;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 2.8
  * @since 2017/10/10 16:27
- * <p>
- * {@hide}
  */
 public class CommonToolbar extends Toolbar {
 

@@ -29,8 +29,6 @@ import androidx.viewpager.widget.ViewPager;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2017/12/28 16:25
- * <p>
- * {@hind}
  */
 public class DraggableViewPager extends ViewPager {
 
