@@ -17,9 +17,9 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api "androidx.appcompat:appcompat:$supportLibraryVersion"
-    api "androidx.recyclerview:recyclerview:$supportLibraryVersion"
-    api "com.google.android.material:material:$supportLibraryVersion"
+    implementation "androidx.appcompat:appcompat:$supportLibraryVersion"
+    implementation "androidx.recyclerview:recyclerview:$supportLibraryVersion"
+    implementation "com.google.android.material:material:$supportLibraryVersion"
 }
 
 //---------------------------------------------
