@@ -158,9 +158,9 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
                 mView.previewPicturesSmoothScrollToPosition(addedIndex);
             } else {
                 mView.showMsg(
-                        mView.getString(R.string.libpicturepicker_picturewatcher_tips_over_threshold_prefix) +
+                        mView.getString(R.string.libpicturepicker_watcher_tips_over_threshold_prefix) +
                                 mConfig.threshold +
-                                mView.getString(R.string.libpicturepicker_picturewatcher_tips_over_threshold_suffix)
+                                mView.getString(R.string.libpicturepicker_watcher_tips_over_threshold_suffix)
                 );
             }
         }
@@ -173,7 +173,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
     @Override
     public void handleEnsureClick() {
         if (mPickedPaths.isEmpty()) {
-            mView.showMsg(mView.getString(R.string.libpicturepicker_picturewatcher_tips_ensure_failed));
+            mView.showMsg(mView.getString(R.string.libpicturepicker_watcher_tips_ensure_failed));
             return;
         }
         if (VersionUtil.isLollipop()) {
@@ -226,7 +226,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
      */
     private CharSequence buildEnsureText() {
         return MessageFormat.format("{0}({1}/{2})",
-                mView.getString(R.string.libpicturepicker_picturewatcher_ensure), mPickedPaths.size(), mConfig.threshold);
+                mView.getString(R.string.libpicturepicker_watcher_ensure), mPickedPaths.size(), mConfig.threshold);
     }
 
 }

@@ -103,11 +103,11 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
                 this);
         // 添加选中详情的文本
         mToolbar.addLeftText(TAG_TOOLBAR_CHECKED_DETAIL, getString(
-                R.string.libpicturepicker_picturepicker_all_picture), 20, null);
+                R.string.libpicturepicker_picker_all_picture), 20, null);
         mTvToolbarFolderName = mToolbar.getViewByTag(TAG_TOOLBAR_CHECKED_DETAIL);
         // 添加图片确认按钮
         mToolbar.addRightText(TAG_TOOLBAR_ENSURE, getString(
-                R.string.libpicturepicker_picturepicker_ensure), 15, this);
+                R.string.libpicturepicker_picker_ensure), 15, this);
         mTvToolbarEnsure = mToolbar.getViewByTag(TAG_TOOLBAR_ENSURE);
     }
 
@@ -129,10 +129,8 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
         // Floating action bar.
         mFab = findViewById(R.id.fab);
-        mFab.setVisibility(View.GONE);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
         params.setBehavior(new PicturePickerFabBehavior());
-        mFab.setLayoutParams(params);
         mFab.setOnClickListener(this);
     }
 

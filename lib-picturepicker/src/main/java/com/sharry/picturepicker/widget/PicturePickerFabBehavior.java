@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
  * @version 1.0
  * @since 2018/9/18 16:25
  * <p>
- * {@hind}
  */
 public class PicturePickerFabBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
 

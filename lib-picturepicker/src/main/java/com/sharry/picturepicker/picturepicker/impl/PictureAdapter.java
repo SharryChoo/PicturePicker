@@ -112,7 +112,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
     private void bindCameraHeader(ViewHolder holder) {
         holder.ivPicture.setScaleType(ImageView.ScaleType.CENTER);
         holder.ivPicture.setImageResource(mConfig.cameraIconDrawableResId == PickerConfig.INVALIDATE_VALUE
-                ? R.drawable.libpicturepicker_picturepicker_camera : mConfig.cameraIconDrawableResId);
+                ? R.drawable.libpicturepicker_picker_camera : mConfig.cameraIconDrawableResId);
         holder.checkIndicator.setVisibility(View.INVISIBLE);
     }
 

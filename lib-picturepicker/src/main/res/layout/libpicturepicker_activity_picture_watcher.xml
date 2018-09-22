@@ -37,7 +37,7 @@
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="@string/libpicturepicker_picturewatcher_ensure"
+            android:text="@string/libpicturepicker_watcher_ensure"
             android:textColor="@color/libpricturepicker_watcher_bottom_preview_text_color"
             android:textSize="14dp" />
 

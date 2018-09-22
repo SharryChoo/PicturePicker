@@ -138,7 +138,7 @@ class PicturePickerModel implements PicturePickerContract.IModel {
             // 用于存储遍历到的所有图片文件夹集合
             ArrayList<PictureFolder> pictureFolders = new ArrayList<>();
             // 创建一个图片文件夹, 用于保存所有图片
-            PictureFolder allPictureFolder = new PictureFolder(mContext.getString(R.string.libpicturepicker_picturepicker_all_picture));
+            PictureFolder allPictureFolder = new PictureFolder(mContext.getString(R.string.libpicturepicker_picker_all_picture));
             pictureFolders.add(allPictureFolder);
             // key 为图片的文件夹的绝对路径, values 为 PictureFolder 的对象
             HashMap<String, PictureFolder> caches = new HashMap<>();
@@ -213,7 +213,7 @@ class PicturePickerModel implements PicturePickerContract.IModel {
             String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
             // 为空说明直接在 StorageCard 的根目录
             if (TextUtils.isEmpty(fileName)) {
-                fileName = mContext.getString(R.string.libpicturepicker_picturepicker_root_folder);
+                fileName = mContext.getString(R.string.libpicturepicker_picker_root_folder);
             }
             return fileName;
         }

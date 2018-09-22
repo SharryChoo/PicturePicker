@@ -85,7 +85,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mView.showMsg(mView.getString(R.string.libpicturepicker_picturepicker_tips_fetch_album_failed));
+                        mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_fetch_album_failed));
                     }
                 });
             }
@@ -259,9 +259,9 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     private boolean isCanPickedPicture(boolean isShowFailedMsg) {
         if (mModel.getPickedPaths().size() == mConfig.threshold && mView != null) {
             if (isShowFailedMsg) {
-                mView.showMsg(mView.getString(R.string.libpicturepicker_picturepicker_tips_over_threshold_prefix)
+                mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_prefix)
                         + mConfig.threshold
-                        + mView.getString(R.string.libpicturepicker_picturepicker_tips_over_threshold_suffix)
+                        + mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_suffix)
                 );
             }
             return false;
@@ -276,7 +276,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
      */
     private boolean isCanPreview() {
         if (mModel.getPickedPaths().size() == 0 && mView != null) {
-            mView.showMsg(mView.getString(R.string.libpicturepicker_picturepicker_tips_preview_failed));
+            mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_preview_failed));
             return false;
         }
         return true;
@@ -289,7 +289,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
      */
     private boolean isCanEnsure() {
         if (mModel.getPickedPaths().size() == 0 && mView != null) {
-            mView.showMsg(mView.getString(R.string.libpicturepicker_picturepicker_tips_ensure_failed));
+            mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_ensure_failed));
             return false;
         }
         return true;
@@ -301,7 +301,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     private CharSequence buildEnsureText() {
         return MessageFormat.format(
                 "{0} ({1}/{2})",
-                mView.getString(R.string.libpicturepicker_picturepicker_ensure),
+                mView.getString(R.string.libpicturepicker_picker_ensure),
                 mModel.getPickedPaths().size(),
                 mConfig.threshold
         );
@@ -313,7 +313,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     private CharSequence buildPreviewText() {
         return MessageFormat.format(
                 "{0} ({1})",
-                mView.getString(R.string.libpicturepicker_picturepicker_preview),
+                mView.getString(R.string.libpicturepicker_picker_preview),
                 mModel.getPickedPaths().size()
         );
     }

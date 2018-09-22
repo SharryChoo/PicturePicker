@@ -24,18 +24,6 @@
         android:layoutAnimation="@anim/libpicturepicker_recycle_item_in"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!--悬浮按钮-->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="70dp"
-        android:visibility="invisible"
-        app:layout_anchor="@+id/recycle_pictures"
-        app:layout_anchorGravity="bottom|right"
-        app:srcCompat="@drawable/libpicturepicker_picturepicker_fab" />
-
     <!--底部的照片文件夹选择器-->
     <LinearLayout
         android:id="@+id/ll_bottom_menu"
@@ -56,12 +44,12 @@
                 android:id="@+id/tv_folder_name"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:drawableLeft="@drawable/libpicturepicker_picturepicker_bottom_arrow"
+                android:drawableLeft="@drawable/libpicturepicker_picker_bottom_arrow"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:text="@string/libpicturepicker_picturepicker_all_picture"
+                android:text="@string/libpicturepicker_picker_all_picture"
                 android:textColor="@color/libpricturepicker_picker_bottom_menu_navi_text_collapsed_color"
                 android:textSize="15dp" />
 
@@ -74,7 +62,7 @@
                 android:gravity="center"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:text="@string/libpicturepicker_picturepicker_preview"
+                android:text="@string/libpicturepicker_picker_preview"
                 android:textColor="@color/libpricturepicker_picker_bottom_menu_navi_text_collapsed_color"
                 android:textSize="14dp" />
 
@@ -87,5 +75,16 @@
             android:background="@color/libpricturepicker_picker_bottom_menu_content_folders_bg_color" />
 
     </LinearLayout>
+
+    <!--悬浮按钮-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="70dp"
+        app:layout_anchor="@+id/recycle_pictures"
+        app:layout_anchorGravity="bottom|right"
+        app:srcCompat="@drawable/libpicturepicker_picker_fab" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
