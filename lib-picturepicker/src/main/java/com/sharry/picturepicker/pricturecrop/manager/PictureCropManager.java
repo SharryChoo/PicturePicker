@@ -9,7 +9,8 @@ import android.text.TextUtils;
 
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.FileUtil;
+import com.sharry.picturepicker.support.utils.PictureUtil;
 
 /**
  * Created by think on 2018/6/20.
@@ -127,11 +128,11 @@ public class PictureCropManager {
         }
         // 指定默认的裁剪路径
         if (TextUtils.isEmpty(mConfig.cropDirectoryPath)) {
-            mConfig.cropDirectoryPath = Utils.createDefaultDirectory(mActivity).getAbsolutePath();
+            mConfig.cropDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
         }
         // 指定默认, FileProvider 的 authority
         if (TextUtils.isEmpty(mConfig.authority)) {
-            mConfig.authority = Utils.getDefaultFileProviderAuthority(mActivity);
+            mConfig.authority = FileUtil.getDefaultFileProviderAuthority(mActivity);
         }
         mCropFragment.cropPicture(mConfig, callback);
     }

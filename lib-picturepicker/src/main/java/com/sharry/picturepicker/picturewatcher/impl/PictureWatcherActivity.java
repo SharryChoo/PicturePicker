@@ -118,7 +118,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         mViewPager.setOnPagerChangedListener(this);
         // 2. 初始化底部菜单
         mLlBottomPreviewContainer = findViewById(R.id.ll_bottom_container);
-        mBottomPreviewPictures = findViewById(R.id.rv_pictures);
+        mBottomPreviewPictures = findViewById(R.id.recycle_pictures);
         mBottomPreviewPictures.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
         mTvEnsure = findViewById(R.id.tv_ensure);

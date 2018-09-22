@@ -6,10 +6,6 @@ import android.app.ActivityOptions;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import android.util.Pair;
 import android.view.View;
 
@@ -18,9 +14,14 @@ import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.VersionUtil;
 
 import java.util.ArrayList;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import static com.sharry.picturepicker.picturewatcher.impl.PictureWatcherActivity.START_EXTRA_SHARED_ELEMENT;
 
@@ -218,7 +219,7 @@ public class PictureWatcherManager {
         Intent intent = new Intent(mActivity, PictureWatcherActivity.class);
         intent.putExtra(PictureWatcherActivity.START_EXTRA_CONFIG, mConfig);
         // 5.0 以上的系统使用 Transition 跳转
-        if (Utils.isLollipop()) {
+        if (VersionUtil.isLollipop()) {
             ActivityOptions options = null;
             if (mTransitionView != null) {
                 // 共享元素

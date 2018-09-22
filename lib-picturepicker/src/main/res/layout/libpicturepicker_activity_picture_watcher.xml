@@ -7,7 +7,7 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
+        android:background="@color/libpricturepicker_watcher_bg_color"
         android:gravity="center" />
 
     <com.sharry.picturepicker.widget.toolbar.CommonToolbar
@@ -20,13 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#a9000000"
+        android:background="@color/libpricturepicker_watcher_bottom_preview_bg_color"
         android:gravity="right"
         android:orientation="vertical"
         android:visibility="invisible">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_pictures"
+            android:id="@+id/recycle_pictures"
             android:layout_width="match_parent"
             android:layout_height="100dp" />
 
@@ -38,7 +38,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:text="@string/libpicturepicker_picturewatcher_ensure"
-            android:textColor="@android:color/white"
+            android:textColor="@color/libpricturepicker_watcher_bottom_preview_text_color"
             android:textSize="14dp" />
 
     </LinearLayout>

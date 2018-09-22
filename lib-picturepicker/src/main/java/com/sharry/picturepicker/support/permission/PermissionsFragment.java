@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/1/5 16:22
+ *
+ * {@hind}
  */
 public class PermissionsFragment extends Fragment {
 

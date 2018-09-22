@@ -1,8 +1,10 @@
 package com.sharry.picturepicker.picturepicker.impl;
 
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +14,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picturepicker.manager.PickerConfig;
+import com.sharry.picturepicker.support.utils.ColorUtil;
+import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
 import com.sharry.picturepicker.widget.toolbar.AppBarHelper;
 import com.sharry.picturepicker.widget.toolbar.CommonToolbar;
@@ -19,8 +23,10 @@ import com.sharry.picturepicker.widget.toolbar.Style;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,11 +50,11 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_intent_extra_picked_pictures";// 返回的图片
 
     /*
-       Inner constants associated with toolbar.
+       Tags associated with toolbar.
      */
-    private final int TAG_TOOLBAR_BACK = 0x00000001;
-    private final int TAG_TOOLBAR_CHECKED_DETAIL = 0x00000002;
-    private final int TAG_TOOLBAR_ENSURE = 0x00000003;
+    private static final int TAG_TOOLBAR_BACK = 674;
+    private static final int TAG_TOOLBAR_CHECKED_DETAIL = 96;
+    private static final int TAG_TOOLBAR_ENSURE = 169;
 
     /*
        Presenter associated with this Activity.
@@ -63,11 +69,12 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     private TextView mTvToolbarFolderName;
     private TextView mTvToolbarEnsure;
     // Content pictures
-    private RecyclerView mRvPictures;
-    // bottom menu
-    private TextView mTvSelectedFolderName;
+    private RecyclerView mRecyclePictures;
+    // bottom navigation menu
+    private ViewGroup mMenuNaviContainer;
+    private TextView mTvFolderName;
     private TextView mTvPreview;
-    private RecyclerView mRvFolders;
+    private RecyclerView mRecycleFolders;
     // Floating action bar
     private FloatingActionButton mFab;
 
@@ -105,20 +112,22 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     protected void initViews() {
-        // RecyclerView
-        mRvPictures = findViewById(R.id.rv_pictures);
+        // Pictures recycler view.
+        mRecyclePictures = findViewById(R.id.recycle_pictures);
 
-        // 底部菜单控制区域
-        mTvSelectedFolderName = findViewById(R.id.tv_folder_name);
-        mTvSelectedFolderName.setOnClickListener(this);
+        // Bottom navigation menu.
+        mMenuNaviContainer = findViewById(R.id.rv_menu_navi_container);
+        mTvFolderName = findViewById(R.id.tv_folder_name);
         mTvPreview = findViewById(R.id.tv_preview);
+        mRecycleFolders = findViewById(R.id.recycle_folders);
+        mTvFolderName.setOnClickListener(this);
         mTvPreview.setOnClickListener(this);
-        mRvFolders = findViewById(R.id.rv_folders);
-        mRvFolders.setLayoutManager(new LinearLayoutManager(this));
-        mRvFolders.setHasFixedSize(true);
+        mRecycleFolders.setLayoutManager(new LinearLayoutManager(this));
+        mRecycleFolders.setHasFixedSize(true);
         mBottomMenuBehavior = BottomSheetBehavior.from(findViewById(R.id.ll_bottom_menu));
+        mBottomMenuBehavior.setBottomSheetCallback(new BottomMenuNavigationCallback());
 
-        // 悬浮按钮
+        // Floating action bar.
         mFab = findViewById(R.id.fab);
         mFab.setVisibility(View.GONE);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
@@ -154,24 +163,24 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
-    public void setBackgroundColor(int color) {
-        mRvPictures.setBackgroundColor(color);
+    public void setPicturesBackgroundColor(int color) {
+        mRecyclePictures.setBackgroundColor(color);
     }
 
     @Override
-    public void setSpanCount(int spanCount) {
-        mRvPictures.setLayoutManager(new GridLayoutManager(this, spanCount));
+    public void setPicturesSpanCount(int spanCount) {
+        mRecyclePictures.setLayoutManager(new GridLayoutManager(this, spanCount));
     }
 
     @Override
     public void setPicturesAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths) {
-        mRvPictures.setAdapter(new PictureAdapter(this, config,
+        mRecyclePictures.setAdapter(new PictureAdapter(this, config,
                 displayPaths, userPickedPaths));
     }
 
     @Override
     public void setFolderAdapter(ArrayList<PictureFolder> allFolders) {
-        mRvFolders.setAdapter(new FolderAdapter(this, allFolders));
+        mRecycleFolders.setAdapter(new FolderAdapter(this, allFolders));
     }
 
     @Override
@@ -187,9 +196,9 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     @Override
     public void setPictureFolderText(String folderName) {
         // 更新文件夹名称
-        mTvSelectedFolderName.setText(folderName);
+        mTvFolderName.setText(folderName);
         mTvToolbarFolderName.setText(folderName);
-        mRvPictures.getAdapter().notifyDataSetChanged();
+        mRecyclePictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -204,22 +213,22 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
     @Override
     public void notifyPickedPathsChanged() {
-        mRvPictures.getAdapter().notifyDataSetChanged();
+        mRecyclePictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void notifyDisplayPathsChanged() {
-        mRvPictures.getAdapter().notifyDataSetChanged();
+        mRecyclePictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void notifyDisplayPathsInsertToFirst() {
-        mRvPictures.getAdapter().notifyItemInserted(1);
+        mRecyclePictures.getAdapter().notifyItemInserted(1);
     }
 
     @Override
     public void notifyFolderDataSetChanged() {
-        mRvFolders.getAdapter().notifyDataSetChanged();
+        mRecycleFolders.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -272,6 +281,55 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
             mBottomMenuBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * Callback associated with bottom menu navigation bar.
+     * Method will be invoked when menu scrolled.
+     */
+    private class BottomMenuNavigationCallback extends BottomSheetBehavior.BottomSheetCallback {
+
+        private final Drawable folderDrawable;
+        private final int bgCollapsedColor;
+        private final int bgExpandColor;
+        private final int textCollapsedColor;
+        private final int textExpandColor;
+        private int bgColor;
+        private int textColor;
+
+        BottomMenuNavigationCallback() {
+            folderDrawable = mTvFolderName.getCompoundDrawables()[0];
+            bgCollapsedColor = ContextCompat.getColor(PicturePickerActivity.this,
+                    R.color.libpricturepicker_picker_bottom_menu_navi_bg_collapsed_color);
+            bgExpandColor = ContextCompat.getColor(PicturePickerActivity.this,
+                    R.color.libpricturepicker_picker_bottom_menu_navi_bg_expand_color);
+            textCollapsedColor = ContextCompat.getColor(PicturePickerActivity.this,
+                    R.color.libpricturepicker_picker_bottom_menu_navi_text_collapsed_color);
+            textExpandColor = ContextCompat.getColor(PicturePickerActivity.this,
+                    R.color.libpricturepicker_picker_bottom_menu_navi_text_expand_color);
+        }
+
+        @Override
+        public void onStateChanged(@NonNull View view, int state) {
+        }
+
+        @Override
+        public void onSlide(@NonNull View view, float fraction) {
+            // Get background color associate with the bottom menu navigation bar.
+            bgColor = ColorUtil.gradualChanged(fraction,
+                    bgCollapsedColor, bgExpandColor);
+            mMenuNaviContainer.setBackgroundColor(bgColor);
+            // Get text color associate with the bottom menu  navigation bar.
+            textColor = ColorUtil.gradualChanged(fraction,
+                    textCollapsedColor, textExpandColor);
+            // Set text drawable color before set text color with the purpose of decrease view draw.
+            if (VersionUtil.isLollipop()) {
+                folderDrawable.setTint(textColor);
+            }
+            // Set texts colors associate with the bottom menu.
+            mTvFolderName.setTextColor(textColor);
+            mTvPreview.setTextColor(textColor);
         }
     }
 

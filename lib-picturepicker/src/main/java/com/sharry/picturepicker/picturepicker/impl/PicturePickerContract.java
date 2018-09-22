@@ -48,12 +48,12 @@ interface PicturePickerContract {
         /**
          * 设置整体的背景色
          */
-        void setBackgroundColor(int color);
+        void setPicturesBackgroundColor(int color);
 
         /**
          * 设置 RecyclerView 的列数
          */
-        void setSpanCount(int spanCount);
+        void setPicturesSpanCount(int spanCount);
 
         /**
          * 设置图片的 Adapter

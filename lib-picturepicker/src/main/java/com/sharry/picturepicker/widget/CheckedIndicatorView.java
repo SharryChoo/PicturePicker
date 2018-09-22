@@ -24,6 +24,8 @@ import androidx.appcompat.widget.AppCompatTextView;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/6/14 16:24
+ * <p>
+ * {@hind}
  */
 public class CheckedIndicatorView extends AppCompatTextView {
 

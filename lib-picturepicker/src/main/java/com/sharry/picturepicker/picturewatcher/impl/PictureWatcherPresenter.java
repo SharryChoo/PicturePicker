@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picturewatcher.manager.WatcherConfig;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.VersionUtil;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
         mCurPosition = config.position;
         mCurDisplayPath = mDisplayPaths.get(mCurPosition);
         // 判断是否开启共享动画
-        if (!Utils.isLollipop()) return;
+        if (!VersionUtil.isLollipop()) return;
         mView.setWindowEnterTransitions(new Slide().setDuration(300));
         mView.setWindowReturnTransitions(new Fade().setDuration(300));
         mIsSharedElement = isSharedElement;
@@ -176,7 +176,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
             mView.showMsg(mView.getString(R.string.libpicturepicker_picturewatcher_tips_ensure_failed));
             return;
         }
-        if (Utils.isLollipop()) {
+        if (VersionUtil.isLollipop()) {
             mView.setWindowReturnTransitions(null);
             mView.setSharedElementReturnTransition(null);
         }

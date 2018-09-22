@@ -57,10 +57,10 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
             mView.setToolbarBackgroundDrawable(mConfig.toolbarBkgDrawableResId);
         }
         if (mConfig.pickerBackgroundColor != PickerConfig.INVALIDATE_VALUE) {
-            mView.setBackgroundColor(mConfig.pickerBackgroundColor);
+            mView.setPicturesBackgroundColor(mConfig.pickerBackgroundColor);
         }
         // 设置图片的列数
-        mView.setSpanCount(mConfig.spanCount);
+        mView.setPicturesSpanCount(mConfig.spanCount);
         // 设置 RecyclerView 的 Adapter
         mView.setPicturesAdapter(mConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
         // 获取图片数据

@@ -7,10 +7,13 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 /**
- * Created by Sharry on 2018/6/19.
- * Email: SharryChooCHN@Gmail.com
- * Version: 1.0
- * Description:
+ * 图片查看器相关的配置
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.0
+ * @since 2018/9/22 17:56
+ * <p>
+ * {@hind}
  */
 public class WatcherConfig implements Parcelable {
 

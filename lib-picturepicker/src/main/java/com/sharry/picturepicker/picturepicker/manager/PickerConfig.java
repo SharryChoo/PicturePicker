@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * Email: SharryChooCHN@Gmail.com
  * Version: 1.0
  * Description: 图片选择器的配置属性类
+ * {@hind}
  */
 public class PickerConfig implements Parcelable {
 

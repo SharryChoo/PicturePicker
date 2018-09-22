@@ -1,9 +1,13 @@
 package com.sharry.picturepicker.widget.toolbar;
 
 /**
- * Created by SharryChoo on 2017/10/10.
- * Email: SharryChooCHN@Gmail.com
- * Description: StatusBar/NavigationBar的样式
+ * StatusBar/NavigationBar的样式
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.0
+ * @since 2018/9/22 18:31
+ * <p>
+ * {@hide}
  */
 public enum Style {
     TRANSPARENT,

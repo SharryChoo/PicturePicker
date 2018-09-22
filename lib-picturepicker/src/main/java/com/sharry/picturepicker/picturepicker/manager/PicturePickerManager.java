@@ -17,7 +17,8 @@ import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.FileUtil;
+import com.sharry.picturepicker.support.utils.PictureUtil;
 
 import java.util.ArrayList;
 
@@ -335,7 +336,7 @@ public class PicturePickerManager {
         if (mConfig.isCameraSupport) {
             // 若用户没有设置拍照路径, 则给予默认路径
             if (TextUtils.isEmpty(mConfig.cameraDirectoryPath)) {
-                mConfig.cameraDirectoryPath = Utils.createDefaultDirectory(mActivity).getAbsolutePath();
+                mConfig.cameraDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
             }
         }
         // 若开启了裁剪, 则只能选中一张图片
@@ -344,7 +345,7 @@ public class PicturePickerManager {
             mConfig.userPickedSet = null;
             // 若用户没有设置裁剪路径, 则给予默认路径
             if (TextUtils.isEmpty(mConfig.cropDirectoryPath)) {
-                mConfig.cropDirectoryPath = Utils.createDefaultDirectory(mActivity).getAbsolutePath();
+                mConfig.cropDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
             }
         }
         Intent intent = new Intent(mActivity, PicturePickerActivity.class);

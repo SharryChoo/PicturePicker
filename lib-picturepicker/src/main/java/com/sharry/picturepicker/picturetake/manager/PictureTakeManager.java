@@ -9,7 +9,8 @@ import android.text.TextUtils;
 
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.FileUtil;
+import com.sharry.picturepicker.support.utils.PictureUtil;
 
 /**
  * Created by think on 2018/6/20.
@@ -128,7 +129,7 @@ public class PictureTakeManager {
     private void takeActual(TakeCallback callback) {
         // 指定默认的拍照路径
         if (TextUtils.isEmpty(mConfig.cameraDirectoryPath)) {
-            mConfig.cameraDirectoryPath = Utils.createDefaultDirectory(mActivity).getAbsolutePath();
+            mConfig.cameraDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
         }
         if (mConfig.isCropSupport) {
             if (TextUtils.isEmpty(mConfig.cropDirectoryPath)) {
@@ -137,7 +138,7 @@ public class PictureTakeManager {
         }
         // 若未指定 FileProvider 的 authority, 则给予默认值
         if (TextUtils.isEmpty(mConfig.authority)) {
-            mConfig.authority = Utils.getDefaultFileProviderAuthority(mActivity);
+            mConfig.authority = FileUtil.getDefaultFileProviderAuthority(mActivity);
         }
         mTakePhotoFragment.takePicture(mConfig, callback);
     }

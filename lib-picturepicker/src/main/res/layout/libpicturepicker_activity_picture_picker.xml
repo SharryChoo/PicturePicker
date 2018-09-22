@@ -18,7 +18,7 @@
 
     <!--中心容器-->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_pictures"
+        android:id="@+id/recycle_pictures"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layoutAnimation="@anim/libpicturepicker_recycle_item_in"
@@ -32,7 +32,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="70dp"
         android:visibility="invisible"
-        app:layout_anchor="@+id/rv_pictures"
+        app:layout_anchor="@+id/recycle_pictures"
         app:layout_anchorGravity="bottom|right"
         app:srcCompat="@drawable/libpicturepicker_picturepicker_fab" />
 
@@ -46,10 +46,11 @@
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <RelativeLayout
+            android:id="@+id/rv_menu_navi_container"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_gravity="bottom"
-            android:background="#a9000000">
+            android:background="@color/libpricturepicker_picker_bottom_menu_navi_bg_collapsed_color">
 
             <TextView
                 android:id="@+id/tv_folder_name"
@@ -61,7 +62,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/libpicturepicker_picturepicker_all_picture"
-                android:textColor="@android:color/white"
+                android:textColor="@color/libpricturepicker_picker_bottom_menu_navi_text_collapsed_color"
                 android:textSize="15dp" />
 
             <TextView
@@ -74,16 +75,16 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/libpicturepicker_picturepicker_preview"
-                android:textColor="@android:color/white"
+                android:textColor="@color/libpricturepicker_picker_bottom_menu_navi_text_collapsed_color"
                 android:textSize="14dp" />
 
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_folders"
+            android:id="@+id/recycle_folders"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white" />
+            android:background="@color/libpricturepicker_picker_bottom_menu_content_folders_bg_color" />
 
     </LinearLayout>
 

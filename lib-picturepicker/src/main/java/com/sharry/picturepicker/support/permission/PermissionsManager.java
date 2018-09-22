@@ -15,6 +15,8 @@ import java.util.List;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/1/5 16:23
+ *
+ * {@hind}
  */
 public class PermissionsManager {
 

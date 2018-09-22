@@ -29,6 +29,8 @@ import androidx.appcompat.widget.AppCompatImageView;
 /**
  * A zoomable {@link ImageView}. See {@link PhotoViewAttacher} for most of the details on how the zooming
  * is accomplished
+ *
+ * {@hind}
  */
 public class PhotoView extends AppCompatImageView {
 

@@ -13,7 +13,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.FileUtil;
+import com.sharry.picturepicker.support.utils.PictureUtil;
 
 import java.io.File;
 import java.util.List;
@@ -71,10 +72,10 @@ public class PictureCropFragment extends Fragment {
         this.mConfig = config;
         this.mCropCallback = callback;
         // Create temp file associated with crop function.
-        mTempFile = Utils.createTempFileByDestDirectory(config.cropDirectoryPath);
+        mTempFile = FileUtil.createTempFileByDestDirectory(config.cropDirectoryPath);
         // Get URI associated with target file.
-        Uri originUri = Utils.getUriFromFile(mContext, config.authority, new File(config.originFilePath));
-        Uri tempUri = Utils.getUriFromFile(mContext, config.authority, mTempFile);
+        Uri originUri = FileUtil.getUriFromFile(mContext, config.authority, new File(config.originFilePath));
+        Uri tempUri = FileUtil.getUriFromFile(mContext, config.authority, mTempFile);
         // Completion intent instance.
         Intent intent = new Intent(INTENT_ACTION_START_CROP);
         completion(intent, config, originUri, tempUri);
@@ -90,12 +91,12 @@ public class PictureCropFragment extends Fragment {
             case REQUEST_CODE_CROP:
                 try {
                     // 创建最终的目标文件, 将图片从临时文件压缩到指定的目录
-                    File destFile = Utils.createCropDestFile(mConfig.cropDirectoryPath);
-                    Utils.doCompress(mTempFile.getAbsolutePath(), destFile.getAbsolutePath(), mConfig.destQuality);
+                    File destFile = FileUtil.createCropDestFile(mConfig.cropDirectoryPath);
+                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), destFile.getAbsolutePath(), mConfig.destQuality);
                     // 回调
                     mCropCallback.onCropComplete(destFile.getAbsolutePath());
                     // 通知文件变更
-                    Utils.freshMediaStore(mContext, destFile);
+                    FileUtil.freshMediaStore(mContext, destFile);
                 } catch (Exception e) {
                     Log.e(TAG, "Picture compress failed after crop.", e);
                 } finally {
@@ -127,7 +128,7 @@ public class PictureCropFragment extends Fragment {
             // 将存储图片的 uri 读写权限授权给剪裁工具应用
             List<ResolveInfo> resInfoList = mContext.getPackageManager()
                     .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            for (ResolveInfo resolveInfo: resInfoList) {
+            for (ResolveInfo resolveInfo : resInfoList) {
                 String packageName = resolveInfo.activityInfo.packageName;
                 int modeFlags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                         | Intent.FLAG_GRANT_READ_URI_PERMISSION;

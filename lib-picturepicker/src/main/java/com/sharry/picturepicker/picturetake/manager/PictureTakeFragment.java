@@ -11,7 +11,8 @@ import android.util.Log;
 
 import com.sharry.picturepicker.pricturecrop.manager.CropCallback;
 import com.sharry.picturepicker.pricturecrop.manager.PictureCropManager;
-import com.sharry.picturepicker.support.utils.Utils;
+import com.sharry.picturepicker.support.utils.FileUtil;
+import com.sharry.picturepicker.support.utils.PictureUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,8 +69,8 @@ public class PictureTakeFragment extends Fragment {
     public void takePicture(TakeConfig config, TakeCallback callback) {
         this.mConfig = config;
         this.mTakeCallback = callback;
-        mTempFile = Utils.createTempFileByDestDirectory(config.cameraDirectoryPath);
-        Uri tempUri = Utils.getUriFromFile(mContext, mConfig.authority, mTempFile);
+        mTempFile = FileUtil.createTempFileByDestDirectory(config.cameraDirectoryPath);
+        Uri tempUri = FileUtil.getUriFromFile(mContext, mConfig.authority, mTempFile);
         // 启动相机
         Intent intent = new Intent(INTENT_ACTION_START_CAMERA);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
@@ -84,8 +85,8 @@ public class PictureTakeFragment extends Fragment {
             case REQUEST_CODE_TAKE:
                 try {
                     // 1. 将拍摄后的图片, 压缩到 cameraDestFile 中
-                    File cameraDestFile = Utils.createCameraDestFile(mConfig.cameraDirectoryPath);
-                    Utils.doCompress(mTempFile.getAbsolutePath(), cameraDestFile.getAbsolutePath(), mConfig.cameraDestQuality);
+                    File cameraDestFile = FileUtil.createCameraDestFile(mConfig.cameraDirectoryPath);
+                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), cameraDestFile.getAbsolutePath(), mConfig.cameraDestQuality);
                     // 2. 处理图片裁剪
                     if (mConfig.isCropSupport) {
                         performCropPicture(cameraDestFile.getAbsolutePath());
@@ -93,7 +94,7 @@ public class PictureTakeFragment extends Fragment {
                         // 3. 回调
                         mTakeCallback.onTakeComplete(cameraDestFile.getAbsolutePath());
                         // 刷新文件管理器
-                        Utils.freshMediaStore(mContext, cameraDestFile);
+                        FileUtil.freshMediaStore(mContext, cameraDestFile);
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Picture compress failed after camera take.", e);

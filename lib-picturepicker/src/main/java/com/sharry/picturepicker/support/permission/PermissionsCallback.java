@@ -6,6 +6,8 @@ package com.sharry.picturepicker.support.permission;
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/1/5 16:22
+ *
+ * {@hind}
  */
 public interface PermissionsCallback {
     void onResult(boolean granted);
