@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
-import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 import com.sharry.picturepicker.support.loader.PictureLoader;
+import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 import com.sharry.picturepicker.widget.CheckedIndicatorView;
 import com.sharry.picturepicker.widget.DraggableViewPager;
 import com.sharry.picturepicker.widget.photoview.OnPhotoTapListener;
@@ -36,10 +36,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Created by SharryChoo on 2017/12/28.
- * Email: SharryChooCHN@Gmail.com
- * Version:  1.3
- * Description: 图片查看器的 Activity, 主题设置为背景透明效果更佳
+ * 图片查看器的 Activity, 主题设置为背景透明效果更佳
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.3
+ * @since 2018/9/22 23:24
  */
 @SuppressLint("NewApi")
 public class PictureWatcherActivity extends AppCompatActivity implements
@@ -60,13 +61,13 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     private TextView mTvTitle;
     private CheckedIndicatorView mCheckIndicator;
     private DraggableViewPager mViewPager;
+
     // 底部选中容器
     private LinearLayout mLlBottomPreviewContainer;
     private RecyclerView mBottomPreviewPictures;
     private TextView mTvEnsure;
-
     private ArrayList<PhotoView> mPhotoViews = new ArrayList<>();// 图片对象
-    private PictureWatcherAdapter mAdapter;// ViewPager 的 Adapter
+    private WatcherPagerAdapter mWatcherPagerAdapter;// ViewPager 的 Adapter
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,8 +114,8 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     protected void initViews() {
         // 1. 初始化 ViewPager
         mViewPager = findViewById(R.id.view_pager);
-        mAdapter = new PictureWatcherAdapter(mPhotoViews);
-        mViewPager.setAdapter(mAdapter);
+        mWatcherPagerAdapter = new WatcherPagerAdapter(mPhotoViews);
+        mViewPager.setAdapter(mWatcherPagerAdapter);
         mViewPager.setOnPagerChangedListener(this);
         // 2. 初始化底部菜单
         mLlBottomPreviewContainer = findViewById(R.id.ll_bottom_container);
@@ -131,7 +132,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     protected void initData() {
-        mPresenter.fetchData();
+        mPresenter.start();
     }
 
     @Override
@@ -169,7 +170,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void setPreviewAdapter(PictureWatcherPreviewAdapter adapter) {
+    public void setPreviewAdapter(WatcherPreviewAdapter adapter) {
         mBottomPreviewPictures.setAdapter(adapter);
     }
 
@@ -187,7 +188,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
             });
             mPhotoViews.add(photoView);
         }
-        mAdapter.notifyDataSetChanged();
+        mWatcherPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Version: 1.0
  * Description:
  */
-class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, PictureWatcherPreviewAdapter.AdapterInteraction {
+class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, WatcherPreviewAdapter.AdapterInteraction {
 
     private PictureWatcherContract.IView mView;
     private WatcherConfig mConfig;
@@ -82,7 +82,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
     }
 
     @Override
-    public void fetchData() {
+    public void start() {
         // 1. 设置 Toolbar 数据
         mView.displayToolbarLeftText(buildToolbarLeftText());
         mView.setToolbarCheckedIndicatorVisibility(mIsSupportPicked);
@@ -104,7 +104,7 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Pict
             mView.setToolbarIndicatorChecked(mPickedPaths.indexOf(mCurDisplayPath) != -1);
             mView.displayToolbarIndicatorText(buildToolbarCheckedIndicatorText());
             // 底部菜单
-            mView.setPreviewAdapter(new PictureWatcherPreviewAdapter(mPickedPaths, this));
+            mView.setPreviewAdapter(new WatcherPreviewAdapter(mPickedPaths, this));
             mView.displayPreviewEnsureText(buildEnsureText());
             // 底部菜单延时弹出
             if (!mPickedPaths.isEmpty()) {

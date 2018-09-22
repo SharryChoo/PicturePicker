@@ -70,7 +70,7 @@ interface PictureWatcherContract {
         /**
          * 设置底部图片预览的 RecyclerView 的 Adapter
          */
-        void setPreviewAdapter(PictureWatcherPreviewAdapter adapter);
+        void setPreviewAdapter(WatcherPreviewAdapter adapter);
 
         /**
          * 展示确认文本
@@ -155,7 +155,7 @@ interface PictureWatcherContract {
         /**
          * 获取数据
          */
-        void fetchData();
+        void start();
 
         /**
          * 处理页面的滑动

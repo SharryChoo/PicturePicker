@@ -12,17 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Created by Sharry on 2018/6/19.
- * Email: SharryChooCHN@Gmail.com
- * Version: 1.0
- * Description:
+ * 选中视图预览页面的 Adapter
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.0
+ * @since 2018/9/22 23:23
  */
-class PictureWatcherPreviewAdapter extends RecyclerView.Adapter<PictureWatcherPreviewAdapter.ViewHolder> {
+class WatcherPreviewAdapter extends RecyclerView.Adapter<WatcherPreviewAdapter.ViewHolder> {
 
     private final ArrayList<String> userPickedSet;
     private final AdapterInteraction interaction;
 
-    public PictureWatcherPreviewAdapter(ArrayList<String> userPickedSet, AdapterInteraction interaction) {
+    public WatcherPreviewAdapter(ArrayList<String> userPickedSet, AdapterInteraction interaction) {
         this.userPickedSet = userPickedSet;
         this.interaction = interaction;
     }
@@ -41,13 +42,6 @@ class PictureWatcherPreviewAdapter extends RecyclerView.Adapter<PictureWatcherPr
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         PictureLoader.load(holder.ivPicture.getContext(), userPickedSet.get(position), holder.ivPicture);
-        holder.ivPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                interaction.onPreviewItemClicked((ImageView) v, userPickedSet.get(position), position);
-            }
-        });
     }
 
     @Override
@@ -55,13 +49,20 @@ class PictureWatcherPreviewAdapter extends RecyclerView.Adapter<PictureWatcherPr
         return userPickedSet.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final ImageView ivPicture;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.ivPicture = (ImageView) itemView;
+            ivPicture.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            interaction.onPreviewItemClicked((ImageView) v, userPickedSet.get(position), position);
         }
     }
 

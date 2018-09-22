@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.sharry.picturepicker.picker.manager.PicturePickerManager
 import com.sharry.picturepicker.widget.toolbar.CommonToolbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -52,8 +54,18 @@ class MainActivity : AppCompatActivity() {
                     .setCropSize(1000, 1000)
                     .setCropQuality(80)
                     // 图片加载框架注入
-                    .setPictureLoader { context, uri, imageView -> Glide.with(context).load(uri).into(imageView) }
-                    .start { it.forEach { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() } }
+                    .setPictureLoader { context, uri, imageView ->
+                        val options = RequestOptions()
+                                .override(imageView.width, imageView.height)
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        Glide.with(context)
+                                .load(uri)
+                                .apply(options)
+                                .into(imageView)
+                    }
+                    .start {
+                        it.forEach { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
+                    }
         }
     }
 

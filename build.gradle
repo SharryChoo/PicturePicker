@@ -20,7 +20,7 @@ buildscript {
 
         // App dependencies
         supportLibraryVersion = '1.0.0-rc02'
-        glideVersion = '4.6.1'
+        glideVersion = '4.8.0'
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"
@@ -30,7 +30,7 @@ buildscript {
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding='UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 allprojects {
