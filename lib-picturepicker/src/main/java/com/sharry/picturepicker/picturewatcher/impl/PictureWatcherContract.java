@@ -1,6 +1,6 @@
 package com.sharry.picturepicker.picturewatcher.impl;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import android.transition.Transition;
 
 import com.sharry.picturepicker.picturewatcher.manager.WatcherConfig;

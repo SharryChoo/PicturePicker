@@ -1,13 +1,14 @@
 package com.sharry.picturepicker.picturepicker.impl;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
 import android.widget.ImageView;
 
 import com.sharry.picturepicker.picturepicker.manager.PickerConfig;
 
 import java.util.ArrayList;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 /**
  * Created by Sharry on 2018/6/13.
@@ -55,13 +56,14 @@ interface PicturePickerContract {
         void setSpanCount(int spanCount);
 
         /**
-         * 设置 RecyclerView 的 Adapter
-         *
-         * @param config
-         * @param displayPaths
-         * @param userPickedPaths
+         * 设置图片的 Adapter
          */
-        void setAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths);
+        void setPicturesAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths);
+
+        /**
+         * 设置图片文件夹的 Adapter
+         */
+        void setFolderAdapter(ArrayList<PictureFolder> allFolders);
 
         /**
          * 显示选中的图片文件夹
@@ -91,6 +93,11 @@ interface PicturePickerContract {
         void notifyDisplayPathsChanged();
 
         /**
+         * 通知文件夹菜单数据变更了
+         */
+        void notifyFolderDataSetChanged();
+
+        /**
          * 通过相机拍摄了一张照片
          */
         void notifyDisplayPathsInsertToFirst();
@@ -99,11 +106,6 @@ interface PicturePickerContract {
          * 展示消息通知
          */
         void showMsg(String msg);
-
-        /**
-         * 展示底部文件夹选择的 Dialog
-         */
-        void showBottomMenuDialog(ArrayList<PictureFolder> allPictureFolders);
 
         /**
          * 从资源文件获取 String
@@ -137,11 +139,6 @@ interface PicturePickerContract {
          * 处理预览按钮被点击了
          */
         void handlePreviewClicked();
-
-        /**
-         * 处理底部菜单被点击了
-         */
-        void handleBottomMenuClicked();
 
         /**
          * 处理图片文件夹被选中了
@@ -209,6 +206,5 @@ interface PicturePickerContract {
          */
         void removePickedPicture(String imagePath);
     }
-
 
 }

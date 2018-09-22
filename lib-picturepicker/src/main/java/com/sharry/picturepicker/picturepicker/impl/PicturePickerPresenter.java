@@ -59,10 +59,10 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
         if (mConfig.pickerBackgroundColor != PickerConfig.INVALIDATE_VALUE) {
             mView.setBackgroundColor(mConfig.pickerBackgroundColor);
         }
-        // 设置 RecyclerView 的列数
+        // 设置图片的列数
         mView.setSpanCount(mConfig.spanCount);
-        // 设置 RecyclerView 的Adapter
-        mView.setAdapter(mConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
+        // 设置 RecyclerView 的 Adapter
+        mView.setPicturesAdapter(mConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
         // 获取图片数据
         mModel.getSystemPictures(context, new PicturePickerContract.IModel.Callback() {
 
@@ -73,6 +73,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        mView.setFolderAdapter(mModel.getAllFolders());
                         handleFolderChecked(0);
                     }
                 });
@@ -108,11 +109,6 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
         mModel.removePickedPicture(path);
         mView.setToolbarEnsureText(buildEnsureText());
         mView.setPreviewText(buildPreviewText());
-    }
-
-    @Override
-    public void handleBottomMenuClicked() {
-        mView.showBottomMenuDialog(mModel.getAllFolders());
     }
 
     @Override
@@ -216,6 +212,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
         }
         // 3.2 通知 UI 更新视图
         mView.notifyDisplayPathsInsertToFirst();
+        mView.notifyFolderDataSetChanged();
     }
 
     @Override

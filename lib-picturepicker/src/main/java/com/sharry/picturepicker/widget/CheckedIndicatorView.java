@@ -8,14 +8,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.support.annotation.ColorInt;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
+
+import androidx.annotation.ColorInt;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * 用于展示图片被选中的索引 View

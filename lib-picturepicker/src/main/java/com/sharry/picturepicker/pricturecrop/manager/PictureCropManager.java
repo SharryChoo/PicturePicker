@@ -4,7 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.sharry.picturepicker.support.permission.PermissionsCallback;

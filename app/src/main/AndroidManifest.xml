@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/PicturePickerTheme">
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="frank.demo.photopicker.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

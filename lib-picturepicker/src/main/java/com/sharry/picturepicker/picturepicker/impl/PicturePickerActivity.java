@@ -2,17 +2,14 @@ package com.sharry.picturepicker.picturepicker.impl;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picturepicker.manager.PickerConfig;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
@@ -22,6 +19,12 @@ import com.sharry.picturepicker.widget.toolbar.Style;
 
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * 图片选择器的 Activity
  *
@@ -30,7 +33,9 @@ import java.util.ArrayList;
  * @since 2018/9/1 10:17
  */
 public class PicturePickerActivity extends AppCompatActivity implements PicturePickerContract.IView,
-        PicturePickerAdapter.AdapterInteraction, View.OnClickListener {
+        PictureAdapter.AdapterInteraction,
+        FolderAdapter.AdapterInteraction,
+        View.OnClickListener {
 
     /*
        Outer constants.
@@ -53,14 +58,23 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     /*
        Views
      */
+    // Toolbar
     private CommonToolbar mToolbar;
-    private RecyclerView mRecyclerView;
     private TextView mTvToolbarFolderName;
+    private TextView mTvToolbarEnsure;
+    // Content pictures
+    private RecyclerView mRvPictures;
+    // bottom menu
     private TextView mTvSelectedFolderName;
     private TextView mTvPreview;
-    private TextView mTvToolbarEnsure;
+    private RecyclerView mRvFolders;
+    // Floating action bar
     private FloatingActionButton mFab;
 
+    /*
+      Bottom drawer behavior.
+     */
+    private BottomSheetBehavior mBottomMenuBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,12 +106,18 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
     protected void initViews() {
         // RecyclerView
-        mRecyclerView = findViewById(R.id.recycler_view);
+        mRvPictures = findViewById(R.id.rv_pictures);
+
         // 底部菜单控制区域
-        findViewById(R.id.ll_bottom_menu).setOnClickListener(this);
         mTvSelectedFolderName = findViewById(R.id.tv_folder_name);
+        mTvSelectedFolderName.setOnClickListener(this);
         mTvPreview = findViewById(R.id.tv_preview);
         mTvPreview.setOnClickListener(this);
+        mRvFolders = findViewById(R.id.rv_folders);
+        mRvFolders.setLayoutManager(new LinearLayoutManager(this));
+        mRvFolders.setHasFixedSize(true);
+        mBottomMenuBehavior = BottomSheetBehavior.from(findViewById(R.id.ll_bottom_menu));
+
         // 悬浮按钮
         mFab = findViewById(R.id.fab);
         mFab.setVisibility(View.GONE);
@@ -135,18 +155,23 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
     @Override
     public void setBackgroundColor(int color) {
-        mRecyclerView.setBackgroundColor(color);
+        mRvPictures.setBackgroundColor(color);
     }
 
     @Override
     public void setSpanCount(int spanCount) {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
+        mRvPictures.setLayoutManager(new GridLayoutManager(this, spanCount));
     }
 
     @Override
-    public void setAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths) {
-        mRecyclerView.setAdapter(new PicturePickerAdapter(this, config,
+    public void setPicturesAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths) {
+        mRvPictures.setAdapter(new PictureAdapter(this, config,
                 displayPaths, userPickedPaths));
+    }
+
+    @Override
+    public void setFolderAdapter(ArrayList<PictureFolder> allFolders) {
+        mRvFolders.setAdapter(new FolderAdapter(this, allFolders));
     }
 
     @Override
@@ -164,7 +189,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         // 更新文件夹名称
         mTvSelectedFolderName.setText(folderName);
         mTvToolbarFolderName.setText(folderName);
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mRvPictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -179,34 +204,27 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
     @Override
     public void notifyPickedPathsChanged() {
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mRvPictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void notifyDisplayPathsChanged() {
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mRvPictures.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void notifyDisplayPathsInsertToFirst() {
-        mRecyclerView.getAdapter().notifyItemInserted(1);
+        mRvPictures.getAdapter().notifyItemInserted(1);
+    }
+
+    @Override
+    public void notifyFolderDataSetChanged() {
+        mRvFolders.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void showMsg(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showBottomMenuDialog(ArrayList<PictureFolder> allPictureFolders) {
-        PicturePickerDialog.with(this, allPictureFolders)
-                .setOnItemClickedListener(new PicturePickerDialog.OnItemClickedListener() {
-                    @Override
-                    public void onDialogItemClicked(int position) {
-                        mPresenter.handleFolderChecked(position);
-                    }
-                })
-                .show();
+        Snackbar.make(mFab, msg, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -230,15 +248,30 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
+    public void onFolderChecked(int position) {
+        mPresenter.handleFolderChecked(position);
+        mBottomMenuBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ll_bottom_menu) {// 底部菜单按钮
-            mPresenter.handleBottomMenuClicked();
+        if (v.getId() == R.id.tv_folder_name) {// 底部菜单按钮
+            mBottomMenuBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else if (v.getId() == R.id.tv_preview) {// 预览按钮
             mPresenter.handlePreviewClicked();
         } else if (v == mToolbar.getViewByTag(TAG_TOOLBAR_BACK)) {// 返回按钮
             onBackPressed();
         } else if (v == mToolbar.getViewByTag(TAG_TOOLBAR_ENSURE) || v.getId() == R.id.fab) {// 确认按钮
             mPresenter.handleEnsureClicked();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (BottomSheetBehavior.STATE_COLLAPSED != mBottomMenuBehavior.getState()) {
+            mBottomMenuBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            super.onBackPressed();
         }
     }
 

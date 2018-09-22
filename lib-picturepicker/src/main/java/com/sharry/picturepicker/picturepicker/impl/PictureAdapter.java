@@ -3,8 +3,6 @@ package com.sharry.picturepicker.picturepicker.impl;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import com.sharry.picturepicker.widget.CheckedIndicatorView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Adapter associated with PicturePicker.
  *
@@ -25,7 +26,7 @@ import java.util.List;
  * @version 1.3
  * @since 2018/9/1 10:19
  */
-class PicturePickerAdapter extends RecyclerView.Adapter<PicturePickerAdapter.ViewHolder> {
+class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
     private final Context mContext;
     private final PickerConfig mConfig;
@@ -53,8 +54,13 @@ class PicturePickerAdapter extends RecyclerView.Adapter<PicturePickerAdapter.Vie
         void onCameraClicked();
     }
 
-    PicturePickerAdapter(Context context, PickerConfig config, List<String> displayPaths, List<String> userPickedPaths) {
-        this.mInteraction = (AdapterInteraction) context;
+    PictureAdapter(Context context, PickerConfig config, List<String> displayPaths, List<String> userPickedPaths) {
+        if (context instanceof AdapterInteraction) {
+            this.mInteraction = (AdapterInteraction) context;
+        } else {
+            throw new IllegalArgumentException(context + "must implements " +
+                    PictureAdapter.class.getSimpleName() + ".AdapterInteraction");
+        }
         this.mContext = context;
         this.mConfig = config;
         this.mDisplayPaths = displayPaths;

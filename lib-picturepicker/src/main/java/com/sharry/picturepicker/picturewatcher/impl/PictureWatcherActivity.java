@@ -6,10 +6,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.view.Gravity;
 import android.view.View;
@@ -19,8 +15,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picturewatcher.manager.WatcherConfig;
 import com.sharry.picturepicker.support.loader.PictureLoader;
@@ -33,6 +29,11 @@ import com.sharry.picturepicker.widget.toolbar.CommonToolbar;
 import com.sharry.picturepicker.widget.toolbar.Style;
 
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by SharryChoo on 2017/12/28.
@@ -117,7 +118,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         mViewPager.setOnPagerChangedListener(this);
         // 2. 初始化底部菜单
         mLlBottomPreviewContainer = findViewById(R.id.ll_bottom_container);
-        mBottomPreviewPictures = findViewById(R.id.recycler_view);
+        mBottomPreviewPictures = findViewById(R.id.rv_pictures);
         mBottomPreviewPictures.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
         mTvEnsure = findViewById(R.id.tv_ensure);
@@ -174,7 +175,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
 
     @Override
     public void createPhotoViews(ArrayList<String> pictureUris) {
-        for (String uri: pictureUris) {
+        for (String uri : pictureUris) {
             PhotoView photoView = new PhotoView(this);
             photoView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -298,7 +299,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
 
     @Override
     public void showMsg(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Snackbar.make(mBottomPreviewPictures, msg, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

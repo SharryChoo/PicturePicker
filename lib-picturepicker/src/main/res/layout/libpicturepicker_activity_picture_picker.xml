@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!--标题栏-->
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -14,74 +14,77 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!--中心容器-->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_pictures"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layoutAnimation="@anim/libpicturepicker_recycle_item_in"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.design.widget.FloatingActionButton
+    <!--悬浮按钮-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
         android:layout_marginRight="20dp"
-        android:src="@drawable/libpicturepicker_picturepicker_fab"
+        android:layout_marginBottom="70dp"
         android:visibility="invisible"
-        app:layout_anchor="@+id/recycler_view"
-        app:layout_anchorGravity="bottom|right" />
+        app:layout_anchor="@+id/rv_pictures"
+        app:layout_anchorGravity="bottom|right"
+        app:srcCompat="@drawable/libpicturepicker_picturepicker_fab" />
 
     <!--底部的照片文件夹选择器-->
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/ll_bottom_menu"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_gravity="bottom"
-        android:background="#a9000000">
+        android:layout_height="500dp"
+        android:orientation="vertical"
+        app:behavior_peekHeight="55dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <LinearLayout
-            android:id="@+id/ll_bottom_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_gravity="bottom"
+            android:background="#a9000000">
 
             <TextView
                 android:id="@+id/tv_folder_name"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical|right"
+                android:drawableLeft="@drawable/libpicturepicker_picturepicker_bottom_arrow"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:text="@string/libpicturepicker_picturepicker_all_picture"
-                android:textColor="#ffffffff"
+                android:textColor="@android:color/white"
                 android:textSize="15dp" />
 
-            <ImageView
-                android:layout_width="15dp"
+            <TextView
+                android:id="@+id/tv_preview"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="4dp"
-                android:paddingLeft="5dp"
-                android:src="@drawable/libpicturepicker_picturepicker_bottom_arrow" />
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical|right"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/libpicturepicker_picturepicker_preview"
+                android:textColor="@android:color/white"
+                android:textSize="14dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_preview"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_folders"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical|right"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="@string/libpicturepicker_picturepicker_preview"
-            android:textColor="#ffffffff"
-            android:textSize="14dp" />
+            android:background="@android:color/white" />
 
-    </FrameLayout>
+    </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

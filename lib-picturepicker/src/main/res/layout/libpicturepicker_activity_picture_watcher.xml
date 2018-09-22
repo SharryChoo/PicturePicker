@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.sharry.picturepicker.widget.DraggableViewPager
         android:id="@+id/view_pager"
@@ -26,8 +25,8 @@
         android:orientation="vertical"
         android:visibility="invisible">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_pictures"
             android:layout_width="match_parent"
             android:layout_height="100dp" />
 
@@ -44,4 +43,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</merge>
