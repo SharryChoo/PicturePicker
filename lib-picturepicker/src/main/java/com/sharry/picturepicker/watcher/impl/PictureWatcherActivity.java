@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.transition.Transition;
-import android.view.Gravity;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -24,9 +26,7 @@ import com.sharry.picturepicker.widget.CheckedIndicatorView;
 import com.sharry.picturepicker.widget.DraggableViewPager;
 import com.sharry.picturepicker.widget.photoview.OnPhotoTapListener;
 import com.sharry.picturepicker.widget.photoview.PhotoView;
-import com.sharry.picturepicker.widget.toolbar.AppBarHelper;
-import com.sharry.picturepicker.widget.toolbar.CommonToolbar;
-import com.sharry.picturepicker.widget.toolbar.Style;
+import com.sharry.picturepicker.widget.toolbar.SToolbar;
 
 import java.util.ArrayList;
 
@@ -88,27 +88,21 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     protected void initTitle() {
-        AppBarHelper.with(this).setStatusBarStyle(Style.TRANSPARENT).apply();
-        CommonToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setAdjustToTransparentStatusBar(true);
-        toolbar.addLeftIcon(0, R.drawable.libpicturepicker_common_arrow_right_white, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.handleBackPressed();
-            }
-        });
-        toolbar.setTitleGravity(Gravity.LEFT);
+        SToolbar toolbar = findViewById(R.id.toolbar);
         mTvTitle = toolbar.getTitleText();
-        mTvTitle.setTextSize(20);
         // 添加右部的索引
         mCheckIndicator = new CheckedIndicatorView(this);
+        mCheckIndicator.setLayoutParams(new ViewGroup.LayoutParams(dp2px(this, 35),
+                dp2px(this, 25)));
+        mCheckIndicator.setPadding(0, 0, dp2px(this, 10), 0);
         mCheckIndicator.setVisibility(View.INVISIBLE);
-        toolbar.addRightView(1, mCheckIndicator, 25, 25, new View.OnClickListener() {
+        mCheckIndicator.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.handleToolbarCheckedIndicatorClick(mCheckIndicator.isChecked());
             }
         });
+        toolbar.addRightView(mCheckIndicator);
     }
 
     protected void initViews() {
@@ -313,6 +307,14 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         super.finish();
         // 当前 Activity 关闭时, 使用淡入淡出的动画
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    /**
+     * Dip convert 2 pixel
+     */
+    static int dp2px(Context context, float dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics());
     }
 
 }

@@ -11,30 +11,36 @@ import android.view.Window;
 
 import java.lang.ref.SoftReference;
 
+import static com.sharry.picturepicker.widget.toolbar.Utils.alphaColor;
+import static com.sharry.picturepicker.widget.toolbar.Utils.isLollipop;
+
 /**
- * 用于改变 StatusBar 和 NavigationBar 的风格的帮助类
+ * 变更 App bar 的风格的帮助类
  *
- * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @author Sharry <a href="frankchoochina@gmail.com">Contact me.</a>
  * @version 1.0
- * @since 2017/10/14 16:26
+ * @since 2018/8/27 23:41
  */
-public class AppBarHelper {
+class AppBarHelper {
 
-    private final int DEFAULT_OPTIONS = 0;
-    private int mOptions = DEFAULT_OPTIONS;
-    private Window mWindow;
-    private Activity mActivity;
-
-    public static AppBarHelper with(Context context) {
+    /**
+     * Get AppBarHelper instance with this factory method.
+     */
+    static AppBarHelper with(Context context) {
         return new AppBarHelper(context);
     }
+
+    private static final int DEFAULT_OPTIONS = 0;
+    private int mOptions = DEFAULT_OPTIONS;
+    private Activity mActivity;
+    private Window mWindow;
 
     private AppBarHelper(Context context) {
         if (context instanceof Activity) {
             mActivity = new SoftReference<>((Activity) context).get();
             mWindow = mActivity.getWindow();
         } else {
-            throw new IllegalArgumentException("AppBarHelper.Constructor -> AppBarHelper 只接收 Activity 类型的 Context");
+            throw new IllegalArgumentException("Please ensure context instance of Activity.");
         }
     }
 
@@ -160,25 +166,6 @@ public class AppBarHelper {
             View decorView = mWindow.getDecorView();
             decorView.setSystemUiVisibility(mOptions);
         }
-    }
-
-    /**
-     * @param baseColor    需要进行透明的Color
-     * @param alphaPercent 透明图(0-1)
-     */
-    private int alphaColor(int baseColor, float alphaPercent) {
-        if (alphaPercent < 0) alphaPercent = 0f;
-        if (alphaPercent > 1) alphaPercent = 1f;
-        // 计算基础透明度
-        int baseAlpha = (baseColor & 0xff000000) >>> 24;
-        // 根基需求计算透明度
-        int alpha = (int) (baseAlpha * alphaPercent);
-        // 根基透明度拼接新的color
-        return alpha << 24 | (baseColor & 0xffffff);
-    }
-
-    private boolean isLollipop() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
 }

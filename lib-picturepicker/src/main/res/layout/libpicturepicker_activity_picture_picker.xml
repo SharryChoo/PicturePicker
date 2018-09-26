@@ -9,10 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.sharry.picturepicker.widget.toolbar.CommonToolbar
+        <com.sharry.picturepicker.widget.toolbar.SToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:backIcon="@drawable/libpicturepicker_common_arrow_right_white"
+            app:itemHorizontalInterval="10dp"
+            app:statusBarStyle="Transparent"
+            app:titleGravity="Left"
+            app:titleTextSize="18dp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

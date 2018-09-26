@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.sharry.picturepicker.picker.manager.PicturePickerManager
-import com.sharry.picturepicker.widget.toolbar.CommonToolbar
+import com.sharry.picturepicker.widget.toolbar.SToolbar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTitle() {
-        CommonToolbar.Builder(this)
+        SToolbar.Builder(this)
                 .setBackgroundColorRes(R.color.colorPrimary)
-                .addTitleText(getString(R.string.app_name))
+                .setTitleText(getString(R.string.app_name))
                 .apply()
     }
 

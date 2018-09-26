@@ -17,9 +17,7 @@ import com.sharry.picturepicker.picker.manager.PickerConfig;
 import com.sharry.picturepicker.support.utils.ColorUtil;
 import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
-import com.sharry.picturepicker.widget.toolbar.AppBarHelper;
-import com.sharry.picturepicker.widget.toolbar.CommonToolbar;
-import com.sharry.picturepicker.widget.toolbar.Style;
+import com.sharry.picturepicker.widget.toolbar.SToolbar;
 
 import java.util.ArrayList;
 
@@ -49,13 +47,6 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_intent_extra_picked_pictures";// 返回的图片
 
     /*
-       Tags associated with toolbar.
-     */
-    private static final int TAG_TOOLBAR_BACK = 674;
-    private static final int TAG_TOOLBAR_CHECKED_DETAIL = 96;
-    private static final int TAG_TOOLBAR_ENSURE = 169;
-
-    /*
        Presenter associated with this Activity.
      */
     private PicturePickerContract.IPresenter mPresenter = new PicturePickerPresenter(this);
@@ -64,7 +55,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
        Views
      */
     // Toolbar
-    private CommonToolbar mToolbar;
+    private SToolbar mToolbar;
     private TextView mTvToolbarFolderName;
     private TextView mTvToolbarEnsure;
     // Content pictures
@@ -93,22 +84,15 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     protected void initTitle() {
-        // 设置沉浸式状态栏
-        AppBarHelper.with(this).setStatusBarStyle(Style.TRANSPARENT).apply();
         // 初始化视图
         mToolbar = findViewById(R.id.toolbar);
-        mToolbar.setAdjustToTransparentStatusBar(true);
-        // 添加返回按钮
-        mToolbar.addLeftIcon(TAG_TOOLBAR_BACK, R.drawable.libpicturepicker_common_arrow_right_white,
-                this);
-        // 添加选中详情的文本
-        mToolbar.addLeftText(TAG_TOOLBAR_CHECKED_DETAIL, getString(
-                R.string.libpicturepicker_picker_all_picture), 20, null);
-        mTvToolbarFolderName = mToolbar.getViewByTag(TAG_TOOLBAR_CHECKED_DETAIL);
+        // 设置标题文本
+        mToolbar.setTitleText(getString(R.string.libpicturepicker_picker_all_picture));
+        mTvToolbarFolderName = mToolbar.getTitleText();
         // 添加图片确认按钮
-        mToolbar.addRightText(TAG_TOOLBAR_ENSURE, getString(
+        mToolbar.addRightText(getString(
                 R.string.libpicturepicker_picker_ensure), 15, this);
-        mTvToolbarEnsure = mToolbar.getViewByTag(TAG_TOOLBAR_ENSURE);
+        mTvToolbarEnsure = mToolbar.getRightMenuView(0);
     }
 
     protected void initViews() {
@@ -269,9 +253,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
             mBottomMenuBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else if (v.getId() == R.id.tv_preview) {// 预览按钮
             mPresenter.handlePreviewClicked();
-        } else if (v == mToolbar.getViewByTag(TAG_TOOLBAR_BACK)) {// 返回按钮
-            onBackPressed();
-        } else if (v == mToolbar.getViewByTag(TAG_TOOLBAR_ENSURE) || v.getId() == R.id.fab) {// 确认按钮
+        } else if (v == mTvToolbarEnsure || v.getId() == R.id.fab) {// 确认按钮
             mPresenter.handleEnsureClicked();
         }
     }

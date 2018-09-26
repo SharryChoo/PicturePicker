@@ -4,12 +4,23 @@ package com.sharry.picturepicker.widget.toolbar;
  * StatusBar/NavigationBar的样式
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
- * @version 1.0
- * @since 2018/9/22 18:31
+ * @version 1.1
+ * @since 2017/10/10 13:52
  */
 public enum Style {
-    TRANSPARENT,
-    TRANSLUCENCE,
-    HIDE,
-    DEFAULT
+
+    TRANSPARENT(0),
+    TRANSLUCENCE(1),
+    HIDE(3),
+    DEFAULT(4);
+
+    int val;
+
+    Style(int val) {
+        this.val = val;
+    }
+
+    int getVal() {
+        return val;
+    }
 }
