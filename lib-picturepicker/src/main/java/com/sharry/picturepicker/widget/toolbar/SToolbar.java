@@ -145,7 +145,7 @@ public class SToolbar extends Toolbar {
     }
 
     private void initArgs(Context context, TypedArray array) {
-        mMinimumHeight = array.getDimensionPixelSize(R.styleable.SToolbar_minHeight, getActionBarHeight(context));
+        mMinimumHeight = array.getDimensionPixelSize(R.styleable.SToolbar_minHeight, dp2px(context, 56));
         mItemHorizontalInterval = px2dp(context, array.getDimensionPixelSize(R.styleable.SToolbar_itemHorizontalInterval,
                 dp2px(context, DEFAULT_INTERVAL)));
         mTitleTextColor = array.getColor(R.styleable.SToolbar_titleTextColor, mTitleTextColor);
@@ -157,6 +157,7 @@ public class SToolbar extends Toolbar {
     }
 
     private void initViews(Context context) {
+        // Set initialize layout params.
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         removeAllViews();
@@ -186,6 +187,15 @@ public class SToolbar extends Toolbar {
         mCenterContainer.setLayoutParams(centerParams);
         mCenterContainer.setGravity(Gravity.CENTER_VERTICAL);
         addView(mCenterContainer);
+    }
+
+    @Override
+    public void setLayoutParams(ViewGroup.LayoutParams params) {
+        // Lock height always is WRAP_CONTENT.
+        if (params.height != ViewGroup.LayoutParams.WRAP_CONTENT) {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+        super.setLayoutParams(params);
     }
 
     /*=========================================  背景色与沉浸式状态栏 ======================================*/
