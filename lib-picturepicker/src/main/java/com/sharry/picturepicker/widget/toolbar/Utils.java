@@ -3,6 +3,7 @@ package com.sharry.picturepicker.widget.toolbar;
 import android.content.Context;
 import android.os.Build;
 import android.util.TypedValue;
+import android.view.ViewGroup;
 
 import java.util.Collection;
 
@@ -26,8 +27,19 @@ class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    /**
+     * 判断 Map 是否为空
+     */
     static boolean isNotEmpty(Collection collection) {
         return null != collection && collection.size() != 0;
+    }
+
+    /**
+     * 是否为 LayoutParams 特殊的参数
+     */
+    static boolean isLayoutParamsSpecialValue(int paramsValue) {
+        return ViewGroup.LayoutParams.MATCH_PARENT == paramsValue
+                || ViewGroup.LayoutParams.WRAP_CONTENT == paramsValue;
     }
 
     /**
@@ -62,7 +74,7 @@ class Utils {
     }
 
     /**
-     * Get action bar height associated with the app.
+     * Get action bar heightExcludePadding associated with the app.
      */
     static int getActionBarHeight(Context context) {
         TypedValue typedValue = new TypedValue();
@@ -73,7 +85,7 @@ class Utils {
     }
 
     /**
-     * Get status bar height associated with the app.
+     * Get status bar heightExcludePadding associated with the app.
      */
     static int getStatusBarHeight(Context context) {
         int resourceId = context.getResources().getIdentifier("status_bar_height",

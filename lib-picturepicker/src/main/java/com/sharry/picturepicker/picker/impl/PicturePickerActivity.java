@@ -18,6 +18,7 @@ import com.sharry.picturepicker.support.utils.ColorUtil;
 import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
 import com.sharry.picturepicker.widget.toolbar.SToolbar;
+import com.sharry.picturepicker.widget.toolbar.TextViewOptions;
 
 import java.util.ArrayList;
 
@@ -90,8 +91,11 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         mToolbar.setTitleText(getString(R.string.libpicturepicker_picker_all_picture));
         mTvToolbarFolderName = mToolbar.getTitleText();
         // 添加图片确认按钮
-        mToolbar.addRightText(getString(
-                R.string.libpicturepicker_picker_ensure), 15, this);
+        mToolbar.addRightMenuText(new TextViewOptions.Builder()
+                .setText(getString(R.string.libpicturepicker_picker_ensure))
+                .setTextSize(15)
+                .setListener(this)
+                .build());
         mTvToolbarEnsure = mToolbar.getRightMenuView(0);
     }
 

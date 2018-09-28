@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.util.TypedValue;
@@ -27,6 +26,7 @@ import com.sharry.picturepicker.widget.DraggableViewPager;
 import com.sharry.picturepicker.widget.photoview.OnPhotoTapListener;
 import com.sharry.picturepicker.widget.photoview.PhotoView;
 import com.sharry.picturepicker.widget.toolbar.SToolbar;
+import com.sharry.picturepicker.widget.toolbar.ViewOptions;
 
 import java.util.ArrayList;
 
@@ -92,17 +92,18 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         mTvTitle = toolbar.getTitleText();
         // 添加右部的索引
         mCheckIndicator = new CheckedIndicatorView(this);
-        mCheckIndicator.setLayoutParams(new ViewGroup.LayoutParams(dp2px(this, 35),
-                dp2px(this, 25)));
-        mCheckIndicator.setPadding(0, 0, dp2px(this, 10), 0);
-        mCheckIndicator.setVisibility(View.INVISIBLE);
-        mCheckIndicator.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.handleToolbarCheckedIndicatorClick(mCheckIndicator.isChecked());
-            }
-        });
-        toolbar.addRightView(mCheckIndicator);
+        toolbar.addRightMenuView(mCheckIndicator, new ViewOptions.Builder()
+                .setVisibility(View.INVISIBLE)
+                .setWidthExcludePadding(dp2px(this, 25))
+                .setHeightExcludePadding(dp2px(this, 25))
+                .setPaddingRight(dp2px(this, 10))
+                .setListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mPresenter.handleToolbarCheckedIndicatorClick(mCheckIndicator.isChecked());
+                    }
+                })
+                .build());
     }
 
     protected void initViews() {

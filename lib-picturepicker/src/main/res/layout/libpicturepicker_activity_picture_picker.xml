@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:backIcon="@drawable/libpicturepicker_common_arrow_right_white"
-            app:itemHorizontalInterval="10dp"
+            app:subItemInterval="10dp"
             app:statusBarStyle="Transparent"
             app:titleGravity="Left"
             app:titleTextSize="18dp" />
