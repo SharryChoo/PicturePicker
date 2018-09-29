@@ -91,11 +91,13 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         mToolbar.setTitleText(getString(R.string.libpicturepicker_picker_all_picture));
         mTvToolbarFolderName = mToolbar.getTitleText();
         // 添加图片确认按钮
-        mToolbar.addRightMenuText(new TextViewOptions.Builder()
-                .setText(getString(R.string.libpicturepicker_picker_ensure))
-                .setTextSize(15)
-                .setListener(this)
-                .build());
+        mToolbar.addRightMenuText(
+                TextViewOptions.Builder()
+                        .setText(getString(R.string.libpicturepicker_picker_ensure))
+                        .setTextSize(15)
+                        .setListener(this)
+                        .build()
+        );
         mTvToolbarEnsure = mToolbar.getRightMenuView(0);
     }
 
