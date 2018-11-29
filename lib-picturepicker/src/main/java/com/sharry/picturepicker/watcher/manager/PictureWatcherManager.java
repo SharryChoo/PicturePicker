@@ -9,19 +9,14 @@ import android.content.Intent;
 import android.util.Pair;
 import android.view.View;
 
-import com.sharry.picturepicker.watcher.impl.PictureWatcherActivity;
 import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
 import com.sharry.picturepicker.support.utils.VersionUtil;
+import com.sharry.picturepicker.watcher.impl.PictureWatcherActivity;
 
-import java.util.ArrayList;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import static com.sharry.picturepicker.watcher.impl.PictureWatcherActivity.START_EXTRA_SHARED_ELEMENT;
 
@@ -55,48 +50,7 @@ public class PictureWatcherManager {
 
     private PictureWatcherManager(Activity activity) {
         this.mActivity = activity;
-        this.mConfig = new WatcherConfig();
         this.mWatcherFragment = getCallbackFragment(mActivity);
-    }
-
-    /**
-     * 选择的最大阈值
-     */
-    public PictureWatcherManager setThreshold(int threshold) {
-        mConfig.threshold = threshold;
-        return this;
-    }
-
-    /**
-     * 需要展示的 URI
-     */
-    public PictureWatcherManager setPictureUri(@NonNull String uri) {
-        ArrayList<String> pictureUris = new ArrayList<>();
-        pictureUris.add(uri);
-        setPictureUris(pictureUris, 0);
-        return this;
-    }
-
-    /**
-     * 需要展示的 URI 集合
-     *
-     * @param pictureUris 数据集合
-     * @param position    展示的位置
-     */
-    public PictureWatcherManager setPictureUris(@NonNull ArrayList<String> pictureUris, int position) {
-        mConfig.pictureUris = pictureUris;
-        mConfig.position = position;
-        return this;
-    }
-
-    /**
-     * 设置用户已经选中的图片, 相册会根据 Path 比较, 在相册中打钩
-     *
-     * @param pickedPictures 已选中的图片
-     */
-    public PictureWatcherManager setUserPickedSet(@NonNull ArrayList<String> pickedPictures) {
-        mConfig.userPickedSet = pickedPictures;
-        return this;
     }
 
     /**
@@ -108,70 +62,17 @@ public class PictureWatcherManager {
     }
 
     /**
-     * 设置选择索引的边框颜色
-     *
-     * @param textColorId 边框的颜色 ID
+     * 设置图片预览的配置
      */
-    public PictureWatcherManager setIndicatorTextColorRes(@ColorRes int textColorId) {
-        return setIndicatorTextColor(ContextCompat.getColor(mActivity, textColorId));
-    }
-
-    /**
-     * 设置选择索引的边框颜色
-     *
-     * @param textColor 边框的颜色
-     */
-    public PictureWatcherManager setIndicatorTextColor(@ColorInt int textColor) {
-        mConfig.indicatorTextColor = textColor;
-        return this;
-    }
-
-    /**
-     * 设置选择索引的边框颜色
-     *
-     * @param solidColorId 边框的颜色 ID
-     */
-    public PictureWatcherManager setIndicatorSolidColorRes(@ColorRes int solidColorId) {
-        return setIndicatorSolidColor(ContextCompat.getColor(mActivity, solidColorId));
-    }
-
-    /**
-     * 设置选择索引的边框颜色
-     *
-     * @param solidColor 边框的颜色
-     */
-    public PictureWatcherManager setIndicatorSolidColor(@ColorInt int solidColor) {
-        mConfig.indicatorSolidColor = solidColor;
-        return this;
-    }
-
-    /**
-     * 设置选择索引的边框颜色
-     *
-     * @param checkedColorId   选中的边框颜色
-     * @param uncheckedColorId 未选中的边框颜色
-     */
-    public PictureWatcherManager setIndicatorBorderColorRes(@ColorRes int checkedColorId, @ColorRes int uncheckedColorId) {
-        return setIndicatorBorderColor(ContextCompat.getColor(mActivity, checkedColorId),
-                ContextCompat.getColor(mActivity, uncheckedColorId));
-    }
-
-    /**
-     * 设置选择索引的边框颜色
-     *
-     * @param checkedColor   选中的边框颜色的 Res Id
-     * @param uncheckedColor 未选中的边框颜色的Res Id
-     */
-    public PictureWatcherManager setIndicatorBorderColor(@ColorInt int checkedColor, @ColorInt int uncheckedColor) {
-        mConfig.indicatorBorderCheckedColor = checkedColor;
-        mConfig.indicatorBorderUncheckedColor = uncheckedColor;
+    public PictureWatcherManager setConfig(@NonNull WatcherConfig config) {
+        this.mConfig = config;
         return this;
     }
 
     /**
      * 设置图片加载方案
      */
-    public PictureWatcherManager setPictureLoader(IPictureLoader loader) {
+    public PictureWatcherManager setPictureLoader(@NonNull IPictureLoader loader) {
         PictureLoader.setPictureLoader(loader);
         return this;
     }

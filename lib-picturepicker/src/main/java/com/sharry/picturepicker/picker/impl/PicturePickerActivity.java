@@ -1,5 +1,7 @@
 package com.sharry.picturepicker.picker.impl;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -55,7 +57,6 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     /*
        Views
      */
-    // Toolbar
     private SToolbar mToolbar;
     private TextView mTvToolbarFolderName;
     private TextView mTvToolbarEnsure;
@@ -82,50 +83,6 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         initTitle();
         initViews();
         initData();
-    }
-
-    protected void initTitle() {
-        // 初始化视图
-        mToolbar = findViewById(R.id.toolbar);
-        // 设置标题文本
-        mToolbar.setTitleText(getString(R.string.libpicturepicker_picker_all_picture));
-        mTvToolbarFolderName = mToolbar.getTitleText();
-        // 添加图片确认按钮
-        mToolbar.addRightMenuText(
-                TextViewOptions.Builder()
-                        .setText(getString(R.string.libpicturepicker_picker_ensure))
-                        .setTextSize(15)
-                        .setListener(this)
-                        .build()
-        );
-        mTvToolbarEnsure = mToolbar.getRightMenuView(0);
-    }
-
-    protected void initViews() {
-        // Pictures recycler view.
-        mRecyclePictures = findViewById(R.id.recycle_pictures);
-
-        // Bottom navigation menu.
-        mMenuNaviContainer = findViewById(R.id.rv_menu_navi_container);
-        mTvFolderName = findViewById(R.id.tv_folder_name);
-        mTvPreview = findViewById(R.id.tv_preview);
-        mRecycleFolders = findViewById(R.id.recycle_folders);
-        mTvFolderName.setOnClickListener(this);
-        mTvPreview.setOnClickListener(this);
-        mRecycleFolders.setLayoutManager(new LinearLayoutManager(this));
-        mRecycleFolders.setHasFixedSize(true);
-        mBottomMenuBehavior = BottomSheetBehavior.from(findViewById(R.id.ll_bottom_menu));
-        mBottomMenuBehavior.setBottomSheetCallback(new BottomMenuNavigationCallback());
-
-        // Floating action bar.
-        mFab = findViewById(R.id.fab);
-        mFab.setOnClickListener(this);
-        mFabBehavior = PicturePickerFabBehavior.from(mFab);
-    }
-
-    protected void initData() {
-        mPresenter.start(this, (PickerConfig)
-                getIntent().getParcelableExtra(START_EXTRA_CONFIG));
     }
 
     @Override
@@ -160,13 +117,15 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
-    public void setPicturesAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths) {
+    public void setPicturesAdapter(@NonNull PickerConfig config,
+                                   @NonNull ArrayList<String> displayPaths,
+                                   @NonNull ArrayList<String> userPickedPaths) {
         mRecyclePictures.setAdapter(new PictureAdapter(this, config,
                 displayPaths, userPickedPaths));
     }
 
     @Override
-    public void setFolderAdapter(ArrayList<PictureFolder> allFolders) {
+    public void setFolderAdapter(@NonNull ArrayList<PictureFolder> allFolders) {
         mRecycleFolders.setAdapter(new FolderAdapter(this, allFolders));
     }
 
@@ -185,7 +144,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
-    public void setPictureFolderText(String folderName) {
+    public void setPictureFolderText(@NonNull String folderName) {
         // 更新文件夹名称
         mTvFolderName.setText(folderName);
         mTvToolbarFolderName.setText(folderName);
@@ -193,12 +152,12 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
-    public void setToolbarEnsureText(CharSequence content) {
+    public void setToolbarEnsureText(@NonNull CharSequence content) {
         mTvToolbarEnsure.setText(content);
     }
 
     @Override
-    public void setPreviewText(CharSequence content) {
+    public void setPreviewText(@NonNull CharSequence content) {
         mTvPreview.setText(content);
     }
 
@@ -223,8 +182,16 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     @Override
-    public void showMsg(String msg) {
+    public void showMsg(@NonNull String msg) {
         Snackbar.make(mFab, msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setResult(@NonNull ArrayList<String> pickedPaths) {
+        Intent intent = new Intent();
+        intent.putExtra(PicturePickerActivity.RESULT_EXTRA_PICKED_PICTURES, pickedPaths);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     @Override
@@ -271,6 +238,50 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         } else {
             super.onBackPressed();
         }
+    }
+
+    protected void initTitle() {
+        // 初始化视图
+        mToolbar = findViewById(R.id.toolbar);
+        // 设置标题文本
+        mToolbar.setTitleText(getString(R.string.libpicturepicker_picker_all_picture));
+        mTvToolbarFolderName = mToolbar.getTitleText();
+        // 添加图片确认按钮
+        mToolbar.addRightMenuText(
+                TextViewOptions.Builder()
+                        .setText(getString(R.string.libpicturepicker_picker_ensure))
+                        .setTextSize(15)
+                        .setListener(this)
+                        .build()
+        );
+        mTvToolbarEnsure = mToolbar.getRightMenuView(0);
+    }
+
+    protected void initViews() {
+        // Pictures recycler view.
+        mRecyclePictures = findViewById(R.id.recycle_pictures);
+
+        // Bottom navigation menu.
+        mMenuNaviContainer = findViewById(R.id.rv_menu_navi_container);
+        mTvFolderName = findViewById(R.id.tv_folder_name);
+        mTvPreview = findViewById(R.id.tv_preview);
+        mRecycleFolders = findViewById(R.id.recycle_folders);
+        mTvFolderName.setOnClickListener(this);
+        mTvPreview.setOnClickListener(this);
+        mRecycleFolders.setLayoutManager(new LinearLayoutManager(this));
+        mRecycleFolders.setHasFixedSize(true);
+        mBottomMenuBehavior = BottomSheetBehavior.from(findViewById(R.id.ll_bottom_menu));
+        mBottomMenuBehavior.setBottomSheetCallback(new BottomMenuNavigationCallback());
+
+        // Floating action bar.
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(this);
+        mFabBehavior = PicturePickerFabBehavior.from(mFab);
+    }
+
+    protected void initData() {
+        mPresenter.start(this, (PickerConfig)
+                getIntent().getParcelableExtra(START_EXTRA_CONFIG));
     }
 
     /**

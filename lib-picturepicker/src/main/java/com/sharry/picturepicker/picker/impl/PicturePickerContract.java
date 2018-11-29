@@ -8,6 +8,8 @@ import com.sharry.picturepicker.picker.manager.PickerConfig;
 import java.util.ArrayList;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 /**
@@ -58,29 +60,30 @@ interface PicturePickerContract {
         /**
          * 设置图片的 Adapter
          */
-        void setPicturesAdapter(PickerConfig config, ArrayList<String> displayPaths, ArrayList<String> userPickedPaths);
+        void setPicturesAdapter(@NonNull PickerConfig config, @NonNull ArrayList<String> displayPaths,
+                                @NonNull ArrayList<String> userPickedPaths);
 
         /**
          * 设置图片文件夹的 Adapter
          */
-        void setFolderAdapter(ArrayList<PictureFolder> allFolders);
+        void setFolderAdapter(@NonNull ArrayList<PictureFolder> allFolders);
 
         /**
          * 显示选中的图片文件夹
          *
          * @param folderName 文件夹的名称
          */
-        void setPictureFolderText(String folderName);
+        void setPictureFolderText(@NonNull String folderName);
 
         /**
          * 展示 Toolbar 确认文本
          */
-        void setToolbarEnsureText(CharSequence content);
+        void setToolbarEnsureText(@NonNull CharSequence content);
 
         /**
          * 展示预览文本
          */
-        void setPreviewText(CharSequence content);
+        void setPreviewText(@NonNull CharSequence content);
 
         /**
          * 通知选中的图片集合变更了
@@ -105,12 +108,17 @@ interface PicturePickerContract {
         /**
          * 展示消息通知
          */
-        void showMsg(String msg);
+        void showMsg(@NonNull String msg);
 
         /**
          * 从资源文件获取 String
          */
         String getString(@StringRes int resId);
+
+        /**
+         * 设置返回值
+         */
+        void setResult(@NonNull ArrayList<String> pickedPaths);
     }
 
     interface IPresenter {
@@ -118,22 +126,22 @@ interface PicturePickerContract {
         /**
          * 初始化 Model 的数据
          */
-        void start(Context context, PickerConfig config);
+        void start(@NonNull Context context, @NonNull PickerConfig config);
 
         /**
          * 处理图片被选中了
          */
-        boolean handlePictureChecked(String imagePath);
+        boolean handlePictureChecked(@Nullable String imagePath);
 
         /**
          * 处理图片被移除了
          */
-        void handlePictureRemoved(String imagePath);
+        void handlePictureRemoved(@Nullable String imagePath);
 
         /**
          * 处理图片被点击了
          */
-        void handlePictureClicked(int position, ImageView sharedElement);
+        void handlePictureClicked(int position, @Nullable ImageView sharedElement);
 
         /**
          * 处理预览按钮被点击了
@@ -164,6 +172,7 @@ interface PicturePickerContract {
 
             void onFailed(Throwable throwable);
 
+
         }
 
         /**
@@ -192,6 +201,11 @@ interface PicturePickerContract {
         ArrayList<String> getPickedPaths();
 
         /**
+         * 设置当前选中的文件夹
+         */
+        void setCheckedFolder(PictureFolder curDisplayFolder);
+
+        /**
          * 获取用户选中的图片
          */
         ArrayList<String> getDisplayPaths();
@@ -199,12 +213,12 @@ interface PicturePickerContract {
         /**
          * 添加用户选中的图片
          */
-        void addPickedPicture(String imagePath);
+        void addPickedPicture(@NonNull String imagePath);
 
         /**
          * 移除用户选中的图片
          */
-        void removePickedPicture(String imagePath);
+        void removePickedPicture(@NonNull String imagePath);
     }
 
 }

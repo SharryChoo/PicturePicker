@@ -1,4 +1,4 @@
-package com.sharry.picturepicker.take.manager;
+package com.sharry.picturepicker.camera.manager;
 
 /**
  * Created by Sharry on 2018/6/13.
@@ -6,6 +6,6 @@ package com.sharry.picturepicker.take.manager;
  * Version: 1.0
  * Description: 拍照的回调
  */
-public interface TakeCallback {
-    void onTakeComplete(String path);
+public interface CameraCallback {
+    void onCameraTakeComplete(String path);
 }

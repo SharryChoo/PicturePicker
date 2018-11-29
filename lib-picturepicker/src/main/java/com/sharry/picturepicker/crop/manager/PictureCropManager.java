@@ -4,12 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
 import com.sharry.picturepicker.support.utils.FileUtil;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by think on 2018/6/20.
@@ -41,64 +42,13 @@ public class PictureCropManager {
     private PictureCropManager(@NonNull Activity activity) {
         this.mActivity = activity;
         this.mCropFragment = getCallbackFragment(activity);
-        this.mConfig = new CropConfig();
     }
 
     /**
-     * 设置是否为圆形裁剪区域
+     * 设置配置属性
      */
-    public PictureCropManager setCropCircle(boolean isCropCircle) {
-        this.mConfig.isCropCircle = isCropCircle;
-        return this;
-    }
-
-    /**
-     * 设置裁剪的尺寸
-     */
-    public PictureCropManager setCropSize(int width, int height) {
-        this.mConfig.outputX = width;
-        this.mConfig.outputY = height;
-        return this;
-    }
-
-    /**
-     * 设置裁剪的比例
-     */
-    public PictureCropManager setAspectSize(int x, int y) {
-        this.mConfig.aspectX = x;
-        this.mConfig.aspectY = y;
-        return this;
-    }
-
-    /**
-     * 设置 FileProvider 的路径, 7.0 以后用于查找 URI
-     */
-    public PictureCropManager setFileProviderAuthority(String authorities) {
-        mConfig.authority = authorities;
-        return this;
-    }
-
-    /**
-     * 设置需要裁剪的文件地址
-     */
-    public PictureCropManager setOriginFile(@NonNull String filePath) {
-        this.mConfig.originFilePath = filePath;
-        return this;
-    }
-
-    /**
-     * 设置需要裁剪的文件地址
-     */
-    public PictureCropManager setCropDirectory(@NonNull String filePath) {
-        this.mConfig.cropDirectoryPath = filePath;
-        return this;
-    }
-
-    /**
-     * 设置裁剪后压缩的质量
-     */
-    public PictureCropManager setCropQuality(int quality) {
-        mConfig.destQuality = quality;
+    public PictureCropManager setConfig(@NonNull CropConfig config) {
+        this.mConfig = config;
         return this;
     }
 

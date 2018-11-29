@@ -97,10 +97,10 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.ivPicture.setBackgroundColor(mConfig.pickerItemBackgroundColor);
-        if (mConfig.isCameraSupport && position == 0) {
+        if (mConfig.isCameraSupport() && position == 0) {
             bindCameraHeader(holder);
         } else {
-            int relativePosition = position - (mConfig.isCameraSupport ? 1 : 0);
+            int relativePosition = position - (mConfig.isCameraSupport() ? 1 : 0);
             final String uri = mDisplayPaths.get(relativePosition);
             bindItemView(holder, uri);
         }
@@ -109,10 +109,9 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
     /**
      * 绑定相机 Header 的数据
      */
-    private void bindCameraHeader(ViewHolder holder) {
+    private void bindCameraHeader(@NonNull ViewHolder holder) {
         holder.ivPicture.setScaleType(ImageView.ScaleType.CENTER);
-        holder.ivPicture.setImageResource(mConfig.cameraIconDrawableResId == PickerConfig.INVALIDATE_VALUE
-                ? R.drawable.libpicturepicker_picker_camera : mConfig.cameraIconDrawableResId);
+        holder.ivPicture.setImageResource(R.drawable.libpicturepicker_picker_camera);
         holder.checkIndicator.setVisibility(View.INVISIBLE);
     }
 
@@ -132,7 +131,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mDisplayPaths.size() + (mConfig.isCameraSupport ? 1 : 0);
+        return mDisplayPaths.size() + (mConfig.cameraConfig != null ? 1 : 0);
     }
 
     /**
@@ -171,17 +170,17 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
         private void performPictureClicked() {
             // 单独处理相机的点击事件
-            if (mConfig.isCameraSupport && 0 == getAdapterPosition()) {
+            if (mConfig.isCameraSupport() && 0 == getAdapterPosition()) {
                 mInteraction.onCameraClicked();
             } else {
-                int position = getAdapterPosition() - (mConfig.isCameraSupport ? 1 : 0);
+                int position = getAdapterPosition() - (mConfig.isCameraSupport() ? 1 : 0);
                 mInteraction.onPictureClicked(ivPicture, mDisplayPaths.get(position), position);
             }
         }
 
         private void performCheckIndicatorClicked() {
             // 获取当前点击图片的 path
-            int position = getAdapterPosition() - (mConfig.isCameraSupport ? 1 : 0);
+            int position = getAdapterPosition() - (mConfig.isCameraSupport() ? 1 : 0);
             String path = mDisplayPaths.get(position);
             if (checkIndicator.isChecked()) {// Checked-> Unchecked
                 // 移除选中数据与状态

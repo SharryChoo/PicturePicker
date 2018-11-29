@@ -76,6 +76,10 @@ class PicturePickerModel implements PicturePickerContract.IModel {
         return mCheckedFolder;
     }
 
+    /**
+     * 设置当前选中的文件夹
+     */
+    @Override
     public void setCheckedFolder(PictureFolder checkedFolder) {
         this.mCheckedFolder = checkedFolder;
         mDisplayPaths.clear();

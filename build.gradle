@@ -23,7 +23,7 @@ buildscript {
         glideVersion = '4.8.0'
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "com.android.tools.build:gradle:3.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.github.dcendents:android-maven-gradle-plugin:$mavenVersion"
     }

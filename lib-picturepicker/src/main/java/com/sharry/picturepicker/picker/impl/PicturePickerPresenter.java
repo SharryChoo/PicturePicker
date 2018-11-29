@@ -1,25 +1,26 @@
 package com.sharry.picturepicker.picker.impl;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.sharry.picturepicker.R;
-import com.sharry.picturepicker.picker.manager.PickerConfig;
-import com.sharry.picturepicker.take.manager.PictureTakeManager;
-import com.sharry.picturepicker.take.manager.TakeCallback;
-import com.sharry.picturepicker.watcher.manager.PictureWatcherManager;
-import com.sharry.picturepicker.watcher.manager.WatcherCallback;
+import com.sharry.picturepicker.camera.manager.CameraCallback;
+import com.sharry.picturepicker.camera.manager.CameraRequestManager;
 import com.sharry.picturepicker.crop.manager.CropCallback;
 import com.sharry.picturepicker.crop.manager.PictureCropManager;
+import com.sharry.picturepicker.picker.manager.PickerConfig;
 import com.sharry.picturepicker.support.loader.PictureLoader;
+import com.sharry.picturepicker.watcher.manager.PictureWatcherManager;
+import com.sharry.picturepicker.watcher.manager.WatcherCallback;
+import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 
 
 /**
@@ -29,40 +30,48 @@ import java.util.ArrayList;
  * @version 1.3
  * @since 2018/9/1 10:17
  */
-class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCallback, CropCallback, WatcherCallback {
+class PicturePickerPresenter implements PicturePickerContract.IPresenter, CameraCallback, CropCallback, WatcherCallback {
 
     private static final String TAG = PicturePickerPresenter.class.getSimpleName();
     private final PicturePickerContract.IView mView;                                          // View associated with this presenter.
-    private PicturePickerModel mModel;                                                        // Model associated with this presenter.
-    private PickerConfig mConfig;                                                             // Config associated with the PicturePicker.
+    private PicturePickerContract.IModel mModel;                                              // Model associated with this presenter.
+    private PickerConfig mPickerConfig;                                                       // Config associated with the PicturePicker.
+    private WatcherConfig mWatcherConfig;                                                     // Config associated with the PictureWatcher.
 
     PicturePickerPresenter(PicturePickerContract.IView view) {
         this.mView = view;
     }
 
     @Override
-    public void start(Context context, PickerConfig config) {
-        this.mConfig = config;
-        // 初始化 Model
-        this.mModel = new PicturePickerModel(mConfig.userPickedSet == null ? new ArrayList<String>()
-                : mConfig.userPickedSet, mConfig.threshold);
+    public void start(@NonNull Context context, @NonNull PickerConfig config) {
+        this.mPickerConfig = config;
+        this.mModel = new PicturePickerModel(mPickerConfig.userPickedSet == null ? new ArrayList<String>()
+                : mPickerConfig.userPickedSet, mPickerConfig.threshold);
+        this.mWatcherConfig = WatcherConfig.Builder()
+                .setThreshold(mPickerConfig.threshold)
+                .setIndicatorTextColor(mPickerConfig.indicatorTextColor)
+                .setIndicatorSolidColor(mPickerConfig.indicatorSolidColor)
+                .setIndicatorBorderColor(mPickerConfig.indicatorBorderCheckedColor,
+                        mPickerConfig.indicatorBorderUncheckedColor)
+                .setUserPickedSet(mModel.getPickedPaths())
+                .build();
         // 配置 UI 视图
-        mView.setToolbarScrollable(mConfig.isToolbarBehavior);
-        mView.switchFabVisibility(mConfig.isFabBehavior);
-        if (mConfig.toolbarBkgColor != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundColor(mConfig.toolbarBkgColor);
-            mView.setFabColor(mConfig.toolbarBkgColor);
+        mView.setToolbarScrollable(mPickerConfig.isToolbarBehavior);
+        mView.switchFabVisibility(mPickerConfig.isFabBehavior);
+        if (mPickerConfig.toolbarBkgColor != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundColor(mPickerConfig.toolbarBkgColor);
+            mView.setFabColor(mPickerConfig.toolbarBkgColor);
         }
-        if (mConfig.toolbarBkgDrawableResId != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundDrawable(mConfig.toolbarBkgDrawableResId);
+        if (mPickerConfig.toolbarBkgDrawableResId != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundDrawable(mPickerConfig.toolbarBkgDrawableResId);
         }
-        if (mConfig.pickerBackgroundColor != PickerConfig.INVALIDATE_VALUE) {
-            mView.setPicturesBackgroundColor(mConfig.pickerBackgroundColor);
+        if (mPickerConfig.pickerBackgroundColor != PickerConfig.INVALIDATE_VALUE) {
+            mView.setPicturesBackgroundColor(mPickerConfig.pickerBackgroundColor);
         }
         // 设置图片的列数
-        mView.setPicturesSpanCount(mConfig.spanCount);
+        mView.setPicturesSpanCount(mPickerConfig.spanCount);
         // 设置 RecyclerView 的 Adapter
-        mView.setPicturesAdapter(mConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
+        mView.setPicturesAdapter(mPickerConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
         // 获取图片数据
         mModel.getSystemPictures(context, new PicturePickerContract.IModel.Callback() {
 
@@ -113,61 +122,56 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
 
     @Override
     public void handleCameraClicked() {
-        PictureTakeManager.with((Context) mView)
-                .setFileProviderAuthority(mConfig.authority)
-                .setCameraDirectory(mConfig.cameraDirectoryPath)
-                .setCameraQuality(mConfig.cameraQuality)
+        CameraRequestManager.with((Context) mView)
+                .setConfig(mPickerConfig.cameraConfig)
                 .take(this);
     }
 
     @Override
     public void handlePictureClicked(int position, ImageView sharedElement) {
         PictureWatcherManager.with((Context) mView)
-                .setThreshold(mConfig.threshold)
-                .setIndicatorTextColor(mConfig.indicatorTextColor)
-                .setIndicatorSolidColor(mConfig.indicatorSolidColor)
-                .setIndicatorBorderColor(mConfig.indicatorBorderCheckedColor,
-                        mConfig.indicatorBorderUncheckedColor)
-                .setPictureUris(mModel.getDisplayPaths(), position)
-                .setUserPickedSet(mModel.getPickedPaths())
                 .setSharedElement(sharedElement)
                 .setPictureLoader(PictureLoader.getPictureLoader())
+                .setConfig(
+                        mWatcherConfig.newBuilder()
+                                .setPictureUris(mModel.getDisplayPaths(), position)
+                                .build()
+                )
                 .start(this);
     }
 
     @Override
     public void handlePreviewClicked() {
-        if (!isCanPreview()) return;
+        if (!isCanPreview()) {
+            return;
+        }
         PictureWatcherManager.with((Context) mView)
-                .setThreshold(mConfig.threshold)
-                .setIndicatorTextColor(mConfig.indicatorTextColor)
-                .setIndicatorSolidColor(mConfig.indicatorSolidColor)
-                .setIndicatorBorderColor(mConfig.indicatorBorderCheckedColor, mConfig.indicatorBorderUncheckedColor)
-                .setPictureUris(mModel.getPickedPaths(), 0)
-                .setUserPickedSet(mModel.getPickedPaths())
                 .setPictureLoader(PictureLoader.getPictureLoader())
+                .setConfig(
+                        mWatcherConfig.newBuilder()
+                                .setPictureUris(mModel.getPickedPaths(), 0)
+                                .build()
+                )
                 .start(this);
     }
 
     @Override
     public void handleEnsureClicked() {
-        if (!isCanEnsure()) return;
+        if (!isCanEnsure()) {
+            return;
+        }
         // 不需要裁剪, 直接返回
-        if (!mConfig.isCropSupport) {
-            performUserPickedSetResult();
+        if (!mPickerConfig.isCropSupport()) {
+            mView.setResult(mModel.getPickedPaths());
             return;
         }
         // 需要裁剪, 则启动裁剪
         PictureCropManager.with((Context) mView)
-                .setFileProviderAuthority(mConfig.authority)
-                .setCropSize(mConfig.cropWidth, mConfig.cropHeight)
-                .setCropCircle(mConfig.isCropCircle)
-                // 启动裁剪了只能选择一张图片
-                .setOriginFile(mModel.getPickedPaths().get(0))
-                // 裁剪后存储的文件路径
-                .setCropDirectory(mConfig.cropDirectoryPath)
-                // 裁剪后压缩的质量
-                .setCropQuality(mConfig.cropQuality)
+                .setConfig(
+                        mPickerConfig.cropConfig.newBuilder()
+                                .setOriginFile(mModel.getPickedPaths().get(0))
+                                .build()
+                )
                 .crop(this);
     }
 
@@ -181,7 +185,9 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
         // 刷新用户选中的集合
         mModel.getPickedPaths().clear();
         mModel.getPickedPaths().addAll(userPickedSet);
-        if (mView == null) return;
+        if (mView == null) {
+            return;
+        }
         // 展示标题和预览文本
         mView.setToolbarEnsureText(buildEnsureText());
         mView.setPreviewText(buildPreviewText());
@@ -193,7 +199,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     }
 
     @Override
-    public void onTakeComplete(String path) {
+    public void onCameraTakeComplete(String path) {
         // 1. 添加到 <当前展示> 的文件夹下
         PictureFolder checkedFolder = mModel.getCheckedFolder();
         checkedFolder.getPicturePaths().add(0, path);
@@ -219,7 +225,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     public void onCropComplete(String path) {
         mModel.getPickedPaths().clear();
         mModel.getPickedPaths().add(path);
-        performUserPickedSetResult();
+        mView.setResult(mModel.getPickedPaths());
     }
 
     /**
@@ -240,27 +246,16 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
     }
 
     /**
-     * 处理图片选择完成了
-     */
-    private void performUserPickedSetResult() {
-        Activity bind = (Activity) mView;
-        Intent intent = new Intent();
-        intent.putExtra(PicturePickerActivity.RESULT_EXTRA_PICKED_PICTURES, mModel.getPickedPaths());
-        bind.setResult(Activity.RESULT_OK, intent);
-        bind.finish();
-    }
-
-    /**
      * 是否可以继续选择图片
      *
      * @param isShowFailedMsg 是否提示失败原因
      * @return true is can picked, false is cannot picked.
      */
     private boolean isCanPickedPicture(boolean isShowFailedMsg) {
-        if (mModel.getPickedPaths().size() == mConfig.threshold && mView != null) {
+        if (mModel.getPickedPaths().size() == mPickerConfig.threshold && mView != null) {
             if (isShowFailedMsg) {
                 mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_prefix)
-                        + mConfig.threshold
+                        + mPickerConfig.threshold
                         + mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_suffix)
                 );
             }
@@ -303,7 +298,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, TakeCa
                 "{0} ({1}/{2})",
                 mView.getString(R.string.libpicturepicker_picker_ensure),
                 mModel.getPickedPaths().size(),
-                mConfig.threshold
+                mPickerConfig.threshold
         );
     }
 
