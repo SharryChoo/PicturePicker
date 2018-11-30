@@ -124,11 +124,6 @@ interface PicturePickerContract {
     interface IPresenter {
 
         /**
-         * 初始化 Model 的数据
-         */
-        void start(@NonNull Context context, @NonNull PickerConfig config);
-
-        /**
          * 处理图片被选中了
          */
         boolean handlePictureChecked(@Nullable String imagePath);

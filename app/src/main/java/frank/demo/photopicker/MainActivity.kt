@@ -82,6 +82,8 @@ class MainActivity : AppCompatActivity() {
             PicturePickerManager.with(this)
                     .setPickerConfig(
                             pickerConfig.rebuild()
+                                    .setThreshold(etAlbumThreshold.text.toString().toInt())// 一共选中的数量
+                                    .setSpanCount(etSpanCount.text.toString().toInt())// 每行展示的数目
                                     .isToolbarScrollable(cbAnimation.isChecked)
                                     .isFabScrollable(cbAnimation.isChecked)
                                     .setCameraConfig(

@@ -69,7 +69,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     /*
        Presenter associated with this Activity.
      */
-    private PicturePickerContract.IPresenter mPresenter = new PicturePickerPresenter(this);
+    private PicturePickerContract.IPresenter mPresenter;
 
     /*
        Views
@@ -297,7 +297,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     }
 
     protected void initData() {
-        mPresenter.start(this, (PickerConfig)
+        mPresenter  = new PicturePickerPresenter(this, this, (PickerConfig)
                 getIntent().getParcelableExtra(EXTRA_CONFIG));
     }
 

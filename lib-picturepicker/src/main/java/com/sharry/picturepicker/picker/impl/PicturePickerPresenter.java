@@ -33,17 +33,14 @@ import androidx.annotation.NonNull;
 class PicturePickerPresenter implements PicturePickerContract.IPresenter, CameraCallback, CropCallback, WatcherCallback {
 
     private static final String TAG = PicturePickerPresenter.class.getSimpleName();
-    private final PicturePickerContract.IView mView;                                          // View associated with this presenter.
-    private PicturePickerContract.IModel mModel;                                              // Model associated with this presenter.
-    private PickerConfig mPickerConfig;                                                       // Config associated with the PicturePicker.
-    private WatcherConfig mWatcherConfig;                                                     // Config associated with the PictureWatcher.
+    private final PicturePickerContract.IView mView;                                                // View associated with this presenter.
+    private final PicturePickerContract.IModel mModel;                                              // Model associated with this presenter.
+    private final PickerConfig mPickerConfig;                                                       // Config associated with the PicturePicker.
+    private final WatcherConfig mWatcherConfig;                                                     // Config associated with the PictureWatcher.
 
-    PicturePickerPresenter(PicturePickerContract.IView view) {
+    PicturePickerPresenter(@NonNull PicturePickerContract.IView view,
+                           @NonNull Context context, @NonNull PickerConfig config) {
         this.mView = view;
-    }
-
-    @Override
-    public void start(@NonNull Context context, @NonNull PickerConfig config) {
         this.mPickerConfig = config;
         this.mModel = new PicturePickerModel(mPickerConfig.getUserPickedSet(), mPickerConfig.getThreshold());
         this.mWatcherConfig = WatcherConfig.Builder()
@@ -56,51 +53,8 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
                 )
                 .setUserPickedSet(mModel.getPickedPaths())
                 .build();
-        // 配置 UI 视图
-        mView.setToolbarScrollable(mPickerConfig.isToolbarBehavior());
-        mView.switchFabVisibility(mPickerConfig.isFabBehavior());
-        if (mPickerConfig.getToolbarBkgColor() != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundColor(mPickerConfig.getToolbarBkgColor());
-            mView.setFabColor(mPickerConfig.getToolbarBkgColor());
-        }
-        if (mPickerConfig.getToolbarBkgDrawableResId() != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundDrawable(mPickerConfig.getToolbarBkgDrawableResId());
-        }
-        if (mPickerConfig.getPickerBackgroundColor() != PickerConfig.INVALIDATE_VALUE) {
-            mView.setPicturesBackgroundColor(mPickerConfig.getPickerBackgroundColor());
-        }
-        // 设置图片的列数
-        mView.setPicturesSpanCount(mPickerConfig.getSpanCount());
-        // 设置 RecyclerView 的 Adapter
-        mView.setPicturesAdapter(mPickerConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
-        // 获取图片数据
-        mModel.getSystemPictures(context, new PicturePickerContract.IModel.Callback() {
-
-            private final Handler handler = new Handler(Looper.getMainLooper());
-
-            @Override
-            public void onComplete() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mView.setFolderAdapter(mModel.getAllFolders());
-                        handleFolderChecked(0);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailed(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage(), throwable);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_fetch_album_failed));
-                    }
-                });
-            }
-
-        });
+        initView();
+        initModel(context);
     }
 
     @Override
@@ -228,6 +182,56 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
         mModel.getPickedPaths().clear();
         mModel.getPickedPaths().add(path);
         mView.setResult(mModel.getPickedPaths());
+    }
+
+    private void initView() {
+        // 配置 UI 视图
+        mView.setToolbarScrollable(mPickerConfig.isToolbarBehavior());
+        mView.switchFabVisibility(mPickerConfig.isFabBehavior());
+        if (mPickerConfig.getToolbarBkgColor() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundColor(mPickerConfig.getToolbarBkgColor());
+            mView.setFabColor(mPickerConfig.getToolbarBkgColor());
+        }
+        if (mPickerConfig.getToolbarBkgDrawableResId() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundDrawable(mPickerConfig.getToolbarBkgDrawableResId());
+        }
+        if (mPickerConfig.getPickerBackgroundColor() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setPicturesBackgroundColor(mPickerConfig.getPickerBackgroundColor());
+        }
+        // 设置图片的列数
+        mView.setPicturesSpanCount(mPickerConfig.getSpanCount());
+        // 设置 RecyclerView 的 Adapter
+        mView.setPicturesAdapter(mPickerConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
+    }
+
+    private void initModel(Context context) {
+        // 获取图片数据
+        mModel.getSystemPictures(context, new PicturePickerContract.IModel.Callback() {
+
+            private final Handler handler = new Handler(Looper.getMainLooper());
+
+            @Override
+            public void onComplete() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mView.setFolderAdapter(mModel.getAllFolders());
+                        handleFolderChecked(0);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(Throwable throwable) {
+                Log.e(TAG, throwable.getMessage(), throwable);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_fetch_album_failed));
+                    }
+                });
+            }
+        });
     }
 
     /**

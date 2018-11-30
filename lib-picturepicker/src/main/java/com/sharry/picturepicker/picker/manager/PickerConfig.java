@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 public class PickerConfig implements Parcelable {
 
     public static final int INVALIDATE_VALUE = -1;
+    private static final int COLOR_DEFAULT = Color.parseColor("#ff64b6f6");
 
     public static Builder Builder() {
         return new Builder();
@@ -45,7 +46,7 @@ public class PickerConfig implements Parcelable {
     private ArrayList<String> userPickedSet = new ArrayList<>();
     private int threshold = 9, spanCount = 3;
     // Toolbar 背景色
-    private int toolbarBkgColor = Color.parseColor("#ff64b6f6");                 // 背景色
+    private int toolbarBkgColor = COLOR_DEFAULT;                                             // 背景色
     private int toolbarBkgDrawableResId = INVALIDATE_VALUE;                                  // 背景的Drawable
     // 整体背景色
     private int pickerBackgroundColor = INVALIDATE_VALUE;
@@ -53,7 +54,7 @@ public class PickerConfig implements Parcelable {
     private int pickerItemBackgroundColor = Color.WHITE;
     // 指示器背景色
     private int indicatorTextColor = Color.WHITE;
-    private int indicatorSolidColor = Color.parseColor("#ff64b6f6");            // 指示器选中的填充色
+    private int indicatorSolidColor = COLOR_DEFAULT;                                        // 指示器选中的填充色
     private int indicatorBorderCheckedColor = indicatorSolidColor;                          // 指示器边框选中的颜色
     private int indicatorBorderUncheckedColor = Color.WHITE;                                // 指示器边框未被选中的颜色
     // 是否展示滚动动画
