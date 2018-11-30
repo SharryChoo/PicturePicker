@@ -2,23 +2,18 @@ package com.sharry.picturepicker.watcher.manager;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Pair;
 import android.view.View;
 
 import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.watcher.impl.PictureWatcherActivity;
 
 import androidx.annotation.NonNull;
-
-import static com.sharry.picturepicker.watcher.impl.PictureWatcherActivity.START_EXTRA_SHARED_ELEMENT;
+import androidx.annotation.Nullable;
 
 /**
  * Created by Sharry on 2018/6/19.
@@ -81,13 +76,13 @@ public class PictureWatcherManager {
      * 调用图片查看器的方法
      */
     public void start() {
-        start(null);
+        startForResult(null);
     }
 
     /**
      * 调用图片查看器, 一般用于相册
      */
-    public void start(final WatcherCallback callback) {
+    public void startForResult(@Nullable final WatcherCallback callback) {
         // 1. 验证是否实现了图片加载器
         if (PictureLoader.getPictureLoader() == null) {
             throw new UnsupportedOperationException("PictureLoader.load -> please invoke setPictureLoader first");
@@ -98,45 +93,19 @@ public class PictureWatcherManager {
                 .execute(new PermissionsCallback() {
                     @Override
                     public void onResult(boolean granted) {
-                        if (!granted) return;
-                        if (callback != null) startForResultActual(callback);
-                        else startActual();
+                        if (granted) {
+                            startForResultActual(callback);
+                        }
                     }
                 });
     }
 
     /**
-     * 真正的执行 Activity 的启动(无回调)
+     * 真正执行 Activity 的启动
      */
-    private void startActual() {
-        startForResultActual(null);
-    }
-
-    /**
-     * 真正的执行 Activity 的启动(有回调)
-     */
-    private void startForResultActual(final WatcherCallback callback) {
+    private void startForResultActual(@Nullable final WatcherCallback callback) {
         mWatcherFragment.setPickerCallback(callback);
-        Intent intent = new Intent(mActivity, PictureWatcherActivity.class);
-        intent.putExtra(PictureWatcherActivity.START_EXTRA_CONFIG, mConfig);
-        // 5.0 以上的系统使用 Transition 跳转
-        if (VersionUtil.isLollipop()) {
-            ActivityOptions options = null;
-            if (mTransitionView != null) {
-                // 共享元素
-                intent.putExtra(START_EXTRA_SHARED_ELEMENT, true);
-                String transitionKey = mConfig.pictureUris.get(mConfig.position);
-                mTransitionView.setTransitionName(transitionKey);
-                options = ActivityOptions.makeSceneTransitionAnimation(
-                        mActivity, Pair.create(mTransitionView, transitionKey));
-            } else {
-                options = ActivityOptions.makeSceneTransitionAnimation(mActivity);
-            }
-            mWatcherFragment.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED, options.toBundle());
-        } else {
-            mWatcherFragment.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED);
-            mActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }
+        PictureWatcherActivity.startActivityForResult(mActivity, mWatcherFragment, mConfig, mTransitionView);
     }
 
     /**

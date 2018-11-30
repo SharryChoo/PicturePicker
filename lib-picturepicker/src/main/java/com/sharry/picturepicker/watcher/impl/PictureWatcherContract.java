@@ -1,11 +1,11 @@
 package com.sharry.picturepicker.watcher.impl;
 
-import androidx.annotation.StringRes;
 import android.transition.Transition;
 
-import com.sharry.picturepicker.watcher.manager.WatcherConfig;
-
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 /**
  * Created by Sharry on 2018/6/13.
@@ -80,7 +80,7 @@ interface PictureWatcherContract {
         /**
          * 创建 PhotoViews
          */
-        void createPhotoViews(ArrayList<String> pictureUris);
+        void createPhotoViews(int photoViewCount);
 
         /**
          * 绑定当前页面的共享元素
@@ -136,21 +136,19 @@ interface PictureWatcherContract {
          */
         void previewPicturesSmoothScrollToPosition(int position);
 
+        /**
+         * 设置返回值在 finish 之前
+         *
+         * @param pickedPaths     用户选中的图片
+         * @param isEnsurePressed 是否点击了确认按钮
+         */
+        void setResultBeforeFinish(@Nullable ArrayList<String> pickedPaths, boolean isEnsurePressed);
+
         void finish();
     }
 
 
     interface IPresenter {
-
-        /**
-         * 绑定 View
-         */
-        void attach(IView view);
-
-        /**
-         * 初始化
-         */
-        void init(WatcherConfig config, boolean booleanExtra);
 
         /**
          * 获取数据
@@ -173,18 +171,8 @@ interface PictureWatcherContract {
         void handleToolbarCheckedIndicatorClick(boolean checked);
 
         /**
-         * 处理返回操作
+         * 处理 View 的 finish
          */
-        void handleBackPressed();
-
-        /**
-         * 获取用户选中的数据
-         */
-        ArrayList<String> getUserPicked();
-
-        /**
-         * 是否是确认按钮点击了
-         */
-        boolean isEnsurePressed();
+        void handleFinish();
     }
 }

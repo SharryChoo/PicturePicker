@@ -9,6 +9,8 @@ import com.sharry.picturepicker.watcher.impl.PictureWatcherActivity;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
+
 /**
  * Created by Sharry on 2018/6/13.
  * Email: SharryChooCHN@Gmail.com
@@ -42,7 +44,7 @@ public class PictureWatcherFragment extends Fragment {
     /**
      * 设置图片选择回调
      */
-    public void setPickerCallback(WatcherCallback callback) {
+    public void setPickerCallback(@Nullable WatcherCallback callback) {
         this.mWatcherCallback = callback;
     }
 

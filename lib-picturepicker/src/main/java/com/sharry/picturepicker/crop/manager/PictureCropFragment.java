@@ -72,10 +72,10 @@ public class PictureCropFragment extends Fragment {
         this.mConfig = config;
         this.mCropCallback = callback;
         // Create temp file associated with crop function.
-        mTempFile = FileUtil.createTempFileByDestDirectory(config.cropDirectoryPath);
+        mTempFile = FileUtil.createTempFileByDestDirectory(config.getCropDirectoryPath());
         // Get URI associated with target file.
-        Uri originUri = FileUtil.getUriFromFile(mContext, config.authority, new File(config.originFilePath));
-        Uri tempUri = FileUtil.getUriFromFile(mContext, config.authority, mTempFile);
+        Uri originUri = FileUtil.getUriFromFile(mContext, config.getAuthority(), new File(config.getOriginFilePath()));
+        Uri tempUri = FileUtil.getUriFromFile(mContext, config.getAuthority(), mTempFile);
         // Completion intent instance.
         Intent intent = new Intent(INTENT_ACTION_START_CROP);
         completion(intent, config, originUri, tempUri);
@@ -91,8 +91,8 @@ public class PictureCropFragment extends Fragment {
             case REQUEST_CODE_CROP:
                 try {
                     // 创建最终的目标文件, 将图片从临时文件压缩到指定的目录
-                    File destFile = FileUtil.createCropDestFile(mConfig.cropDirectoryPath);
-                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), destFile.getAbsolutePath(), mConfig.destQuality);
+                    File destFile = FileUtil.createCropDestFile(mConfig.getCropDirectoryPath());
+                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), destFile.getAbsolutePath(), mConfig.getDestQuality());
                     // 回调
                     mCropCallback.onCropComplete(destFile.getAbsolutePath());
                     // 通知文件变更
@@ -112,11 +112,11 @@ public class PictureCropFragment extends Fragment {
     private void completion(Intent intent, CropConfig config, Uri originUri, Uri tempUri) {
         intent.setDataAndType(originUri, "image/*");//可以选择图片类型, 如果是*表明所有类型的图片
         intent.putExtra("crop", true);//设置可裁剪状态
-        intent.putExtra("scale", config.aspectX == config.aspectY);//裁剪时是否保留图片的比例, 这里的比例是1:1
-        intent.putExtra("aspectX", config.aspectX);// X方向上的比例
-        intent.putExtra("aspectY", config.aspectY);// Y方向上的比例
-        intent.putExtra("outputX", config.outputX);// 裁剪区域的宽
-        intent.putExtra("outputY", config.outputY);// 裁剪区域的宽
+        intent.putExtra("scale", config.getAspectX() == config.getAspectY());//裁剪时是否保留图片的比例, 这里的比例是1:1
+        intent.putExtra("aspectX", config.getAspectX());// X方向上的比例
+        intent.putExtra("aspectY", config.getAspectY());// Y方向上的比例
+        intent.putExtra("outputX", config.getOutputX());// 裁剪区域的宽
+        intent.putExtra("outputY", config.getOutputY());// 裁剪区域的宽
         intent.putExtra("return-data", false);// 是否将数据保留在Bitmap中返回, 返回的缩略图效果模糊
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());//设置输出的格式
         intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);// 裁剪后的保存路径, 这里的 URI 不需要区分

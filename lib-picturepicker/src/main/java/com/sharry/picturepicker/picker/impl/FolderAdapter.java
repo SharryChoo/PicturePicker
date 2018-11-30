@@ -73,7 +73,7 @@ class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder> {
         private ImageView ivPreview;
         private TextView tvFolderName;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             tvFolderName = itemView.findViewById(R.id.tv_folder_name);
             ivPreview = itemView.findViewById(R.id.iv_preview);

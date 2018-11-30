@@ -36,31 +36,13 @@ public class CameraConfig implements Parcelable {
         }
     };
 
-    public String authority;                 // fileProvider 的 authority 属性, 用于 7.0 之后, 查找文件的 URI
-    public int cameraDestQuality = 80;       // 拍照后压缩的质量
-    public String cameraDirectoryPath;       // 存储文件的目录路径
-    public CropConfig cropConfig;            // 图片裁剪的 Config
+    private String authority;                 // fileProvider 的 authority 属性, 用于 7.0 之后, 查找文件的 URI
+    private int cameraDestQuality = 80;       // 拍照后压缩的质量
+    private String cameraDirectoryPath;       // 存储文件的目录路径
+    private CropConfig cropConfig;            // 图片裁剪的 Config
 
     private CameraConfig() {
 
-    }
-
-    public Builder newBuilder() {
-        return new Builder(this);
-    }
-
-    /**
-     * 是否支持裁剪
-     */
-    public boolean isCropSupport() {
-        return cropConfig != null;
-    }
-
-    protected CameraConfig(Parcel in) {
-        authority = in.readString();
-        cameraDestQuality = in.readInt();
-        cameraDirectoryPath = in.readString();
-        cropConfig = in.readParcelable(CropConfig.class.getClassLoader());
     }
 
     @Override
@@ -71,9 +53,46 @@ public class CameraConfig implements Parcelable {
         dest.writeParcelable(cropConfig, flags);
     }
 
+    /**
+     * 是否支持裁剪
+     */
+    public boolean isCropSupport() {
+        return cropConfig != null;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public int getCameraDestQuality() {
+        return cameraDestQuality;
+    }
+
+    public String getCameraDirectoryPath() {
+        return cameraDirectoryPath;
+    }
+
+    public CropConfig getCropConfig() {
+        return cropConfig;
+    }
+
+    protected CameraConfig(Parcel in) {
+        authority = in.readString();
+        cameraDestQuality = in.readInt();
+        cameraDirectoryPath = in.readString();
+        cropConfig = in.readParcelable(CropConfig.class.getClassLoader());
+    }
+
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    /**
+     * 重新编辑当前对象
+     */
+    public Builder rebuild() {
+        return new Builder(this);
     }
 
     public static class Builder {
@@ -84,8 +103,12 @@ public class CameraConfig implements Parcelable {
             mConfig = new CameraConfig();
         }
 
-        public Builder(CameraConfig config) {
-            this.mConfig = config;
+        private Builder(@NonNull CameraConfig config) {
+            Builder();
+            mConfig.authority = config.authority;
+            mConfig.cameraDestQuality = config.cameraDestQuality;
+            mConfig.cameraDirectoryPath = config.cameraDirectoryPath;
+            mConfig.cropConfig = config.cropConfig;
         }
 
         /**

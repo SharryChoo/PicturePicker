@@ -74,7 +74,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
                 R.layout.libpicturepicker_recycle_item_activity_picture_picker_picture, parent, false));
         // 将 ItemView 的高度修正为宽度 parent 的宽度的三分之一
         int itemSize = (parent.getMeasuredWidth() - parent.getPaddingLeft()
-                - parent.getPaddingRight()) / mConfig.spanCount;
+                - parent.getPaddingRight()) / mConfig.getSpanCount();
         ViewGroup.LayoutParams itemParams = holder.itemView.getLayoutParams();
         itemParams.height = itemSize;
         holder.itemView.setLayoutParams(itemParams);
@@ -96,7 +96,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        holder.ivPicture.setBackgroundColor(mConfig.pickerItemBackgroundColor);
+        holder.ivPicture.setBackgroundColor(mConfig.getPickerItemBackgroundColor());
         if (mConfig.isCameraSupport() && position == 0) {
             bindCameraHeader(holder);
         } else {
@@ -131,7 +131,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mDisplayPaths.size() + (mConfig.cameraConfig != null ? 1 : 0);
+        return mDisplayPaths.size() + (mConfig.isCropSupport() ? 1 : 0);
     }
 
     /**
@@ -145,6 +145,12 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
         final ImageView ivPicture;
         final CheckedIndicatorView checkIndicator;
+        final Runnable pictureClickedRunnable = new Runnable() {
+            @Override
+            public void run() {
+                performPictureClicked();
+            }
+        };
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -153,16 +159,20 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
             ivPicture.setOnClickListener(this);
             // Initialize checkIndicator.
             checkIndicator = itemView.findViewById(R.id.check_indicator);
-            checkIndicator.setTextColor(mConfig.indicatorTextColor);
-            checkIndicator.setSolidColor(mConfig.indicatorSolidColor);
-            checkIndicator.setBorderColor(mConfig.indicatorBorderCheckedColor, mConfig.indicatorBorderUncheckedColor);
+            checkIndicator.setTextColor(mConfig.getIndicatorTextColor());
+            checkIndicator.setSolidColor(mConfig.getIndicatorSolidColor());
+            checkIndicator.setBorderColor(
+                    mConfig.getIndicatorBorderCheckedColor(),
+                    mConfig.getIndicatorBorderUncheckedColor()
+            );
             checkIndicator.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (ivPicture == v) {
-                performPictureClicked();
+                // 延时 100 mm , 等待水波纹动画结束
+                mMainThreadHandler.postDelayed(pictureClickedRunnable, 100);
             } else if (checkIndicator == v) {
                 performCheckIndicatorClicked();
             }

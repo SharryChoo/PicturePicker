@@ -1,6 +1,7 @@
 package com.sharry.picturepicker.picker.impl;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picker.manager.PickerConfig;
+import com.sharry.picturepicker.picker.manager.PicturePickerFragment;
 import com.sharry.picturepicker.support.utils.ColorUtil;
 import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
@@ -44,10 +46,25 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         View.OnClickListener {
 
     /*
-       Outer constants.
+       Constants.
      */
-    public static final String START_EXTRA_CONFIG = "start_intent_extra_config";// 用户配置的属性
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_intent_extra_picked_pictures";// 返回的图片
+    private static final String EXTRA_CONFIG = "start_intent_extra_config";// 用户配置的属性
+
+    /**
+     * U can launch PicturePickerActivity from here.
+     * If U picked success, it will return picked data, U can got it like
+     * {@code ArrayList<String> paths = data.getStringArrayListExtra(PicturePickerActivity.RESULT_EXTRA_PICKED_PICTURES)}
+     *
+     * @param from     The Activity that request launch PicturePickerActivity.
+     * @param resultTo Result data will return to this instance.
+     * @param config   Launch PicturePickerActivity required data.
+     */
+    public static void startActivityForResult(Activity from, Fragment resultTo, PickerConfig config) {
+        Intent intent = new Intent(from, PicturePickerActivity.class);
+        intent.putExtra(PicturePickerActivity.EXTRA_CONFIG, config);
+        resultTo.startActivityForResult(intent, PicturePickerFragment.REQUEST_CODE_PICKED);
+    }
 
     /*
        Presenter associated with this Activity.
@@ -281,7 +298,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
 
     protected void initData() {
         mPresenter.start(this, (PickerConfig)
-                getIntent().getParcelableExtra(START_EXTRA_CONFIG));
+                getIntent().getParcelableExtra(EXTRA_CONFIG));
     }
 
     /**

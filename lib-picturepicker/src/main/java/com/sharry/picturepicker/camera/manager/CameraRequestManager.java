@@ -69,22 +69,24 @@ public class CameraRequestManager {
     }
 
     private void takeActual(CameraCallback callback) {
-        // 指定默认的拍照路径
-        if (TextUtils.isEmpty(mConfig.cameraDirectoryPath)) {
-            mConfig.cameraDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
+        // 1. 若为指定照片默认输出路径, 给予指定默认的拍照路径
+        if (TextUtils.isEmpty(mConfig.getCameraDirectoryPath())) {
+            mConfig.rebuild().setCameraDirectory(FileUtil.createDefaultDirectory(mActivity).getAbsolutePath());
         }
-        // 若未指定 FileProvider 的 authority, 则给予默认值
-        if (TextUtils.isEmpty(mConfig.authority)) {
-            mConfig.authority = FileUtil.getDefaultFileProviderAuthority(mActivity);
+        // 2. 若未指定 FileProvider 的 authority, 则给予默认值
+        if (TextUtils.isEmpty(mConfig.getAuthority())) {
+            mConfig.rebuild().setFileProviderAuthority(FileUtil.getDefaultFileProviderAuthority(mActivity));
         }
-        if (null != mConfig.cropConfig) {
+        if (mConfig.isCropSupport()) {
             // 给图片裁剪添加缺省的输出文件夹
-            if (TextUtils.isEmpty(mConfig.cropConfig.cropDirectoryPath)) {
-                mConfig.cropConfig.cropDirectoryPath = mConfig.cameraDirectoryPath;
+            if (TextUtils.isEmpty(mConfig.getCropConfig().getCropDirectoryPath())) {
+                mConfig.getCropConfig().rebuild()
+                        .setCropDirectory(mConfig.getCameraDirectoryPath());
             }
-            // 给图片裁剪配置添加 authority.
-            if (TextUtils.isEmpty(mConfig.cropConfig.authority)) {
-                mConfig.cropConfig.authority = mConfig.authority;
+            // 给图片裁剪配置缺省 authority.
+            if (TextUtils.isEmpty(mConfig.getCropConfig().getAuthority())) {
+                mConfig.getCropConfig().rebuild()
+                        .setFileProviderAuthority(mConfig.getAuthority());
             }
         }
         mTakePhotoFragment.takePicture(mConfig, callback);

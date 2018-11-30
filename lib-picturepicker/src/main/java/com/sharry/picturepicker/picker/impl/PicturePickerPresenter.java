@@ -45,31 +45,32 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
     @Override
     public void start(@NonNull Context context, @NonNull PickerConfig config) {
         this.mPickerConfig = config;
-        this.mModel = new PicturePickerModel(mPickerConfig.userPickedSet == null ? new ArrayList<String>()
-                : mPickerConfig.userPickedSet, mPickerConfig.threshold);
+        this.mModel = new PicturePickerModel(mPickerConfig.getUserPickedSet(), mPickerConfig.getThreshold());
         this.mWatcherConfig = WatcherConfig.Builder()
-                .setThreshold(mPickerConfig.threshold)
-                .setIndicatorTextColor(mPickerConfig.indicatorTextColor)
-                .setIndicatorSolidColor(mPickerConfig.indicatorSolidColor)
-                .setIndicatorBorderColor(mPickerConfig.indicatorBorderCheckedColor,
-                        mPickerConfig.indicatorBorderUncheckedColor)
+                .setThreshold(mPickerConfig.getThreshold())
+                .setIndicatorTextColor(mPickerConfig.getIndicatorTextColor())
+                .setIndicatorSolidColor(mPickerConfig.getIndicatorSolidColor())
+                .setIndicatorBorderColor(
+                        mPickerConfig.getIndicatorBorderCheckedColor(),
+                        mPickerConfig.getIndicatorBorderUncheckedColor()
+                )
                 .setUserPickedSet(mModel.getPickedPaths())
                 .build();
         // 配置 UI 视图
-        mView.setToolbarScrollable(mPickerConfig.isToolbarBehavior);
-        mView.switchFabVisibility(mPickerConfig.isFabBehavior);
-        if (mPickerConfig.toolbarBkgColor != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundColor(mPickerConfig.toolbarBkgColor);
-            mView.setFabColor(mPickerConfig.toolbarBkgColor);
+        mView.setToolbarScrollable(mPickerConfig.isToolbarBehavior());
+        mView.switchFabVisibility(mPickerConfig.isFabBehavior());
+        if (mPickerConfig.getToolbarBkgColor() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundColor(mPickerConfig.getToolbarBkgColor());
+            mView.setFabColor(mPickerConfig.getToolbarBkgColor());
         }
-        if (mPickerConfig.toolbarBkgDrawableResId != PickerConfig.INVALIDATE_VALUE) {
-            mView.setToolbarBackgroundDrawable(mPickerConfig.toolbarBkgDrawableResId);
+        if (mPickerConfig.getToolbarBkgDrawableResId() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setToolbarBackgroundDrawable(mPickerConfig.getToolbarBkgDrawableResId());
         }
-        if (mPickerConfig.pickerBackgroundColor != PickerConfig.INVALIDATE_VALUE) {
-            mView.setPicturesBackgroundColor(mPickerConfig.pickerBackgroundColor);
+        if (mPickerConfig.getPickerBackgroundColor() != PickerConfig.INVALIDATE_VALUE) {
+            mView.setPicturesBackgroundColor(mPickerConfig.getPickerBackgroundColor());
         }
         // 设置图片的列数
-        mView.setPicturesSpanCount(mPickerConfig.spanCount);
+        mView.setPicturesSpanCount(mPickerConfig.getSpanCount());
         // 设置 RecyclerView 的 Adapter
         mView.setPicturesAdapter(mPickerConfig, mModel.getDisplayPaths(), mModel.getPickedPaths());
         // 获取图片数据
@@ -122,8 +123,9 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
 
     @Override
     public void handleCameraClicked() {
+        // 这里可以确保 CameraConfig 不为 null
         CameraRequestManager.with((Context) mView)
-                .setConfig(mPickerConfig.cameraConfig)
+                .setConfig(mPickerConfig.getCameraConfig())
                 .take(this);
     }
 
@@ -133,11 +135,11 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
                 .setSharedElement(sharedElement)
                 .setPictureLoader(PictureLoader.getPictureLoader())
                 .setConfig(
-                        mWatcherConfig.newBuilder()
+                        mWatcherConfig.rebuild()
                                 .setPictureUris(mModel.getDisplayPaths(), position)
                                 .build()
                 )
-                .start(this);
+                .startForResult(this);
     }
 
     @Override
@@ -148,11 +150,11 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
         PictureWatcherManager.with((Context) mView)
                 .setPictureLoader(PictureLoader.getPictureLoader())
                 .setConfig(
-                        mWatcherConfig.newBuilder()
+                        mWatcherConfig.rebuild()
                                 .setPictureUris(mModel.getPickedPaths(), 0)
                                 .build()
                 )
-                .start(this);
+                .startForResult(this);
     }
 
     @Override
@@ -168,7 +170,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
         // 需要裁剪, 则启动裁剪
         PictureCropManager.with((Context) mView)
                 .setConfig(
-                        mPickerConfig.cropConfig.newBuilder()
+                        mPickerConfig.getCropConfig().rebuild()
                                 .setOriginFile(mModel.getPickedPaths().get(0))
                                 .build()
                 )
@@ -252,10 +254,10 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
      * @return true is can picked, false is cannot picked.
      */
     private boolean isCanPickedPicture(boolean isShowFailedMsg) {
-        if (mModel.getPickedPaths().size() == mPickerConfig.threshold && mView != null) {
+        if (mModel.getPickedPaths().size() == mPickerConfig.getThreshold() && mView != null) {
             if (isShowFailedMsg) {
                 mView.showMsg(mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_prefix)
-                        + mPickerConfig.threshold
+                        + mPickerConfig.getThreshold()
                         + mView.getString(R.string.libpicturepicker_picker_tips_over_threshold_suffix)
                 );
             }
@@ -298,7 +300,7 @@ class PicturePickerPresenter implements PicturePickerContract.IPresenter, Camera
                 "{0} ({1}/{2})",
                 mView.getString(R.string.libpicturepicker_picker_ensure),
                 mModel.getPickedPaths().size(),
-                mPickerConfig.threshold
+                mPickerConfig.getThreshold()
         );
     }
 

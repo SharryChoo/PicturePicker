@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * 图片查看器相关的配置
@@ -22,25 +23,29 @@ public class WatcherConfig implements Parcelable {
         return new Builder();
     }
 
+    public static final Creator<WatcherConfig> CREATOR = new Creator<WatcherConfig>() {
+        @Override
+        public WatcherConfig createFromParcel(Parcel in) {
+            return new WatcherConfig(in);
+        }
+
+        @Override
+        public WatcherConfig[] newArray(int size) {
+            return new WatcherConfig[size];
+        }
+    };
+
     // 图片选择的相关配置
-    public ArrayList<String> pictureUris;// 需要展示的集合
-    public ArrayList<String> userPickedSet;// 选中的集合
-    public int threshold;// 阈值
-
-    // 指示器背景色
-    public int indicatorTextColor = Color.WHITE;
-    public int indicatorSolidColor = Color.parseColor("#ff64b6f6");     // 指示器选中的填充色
-    public int indicatorBorderCheckedColor = indicatorSolidColor;                   // 指示器边框选中的颜色
-    public int indicatorBorderUncheckedColor = Color.WHITE;                         // 指示器边框未被选中的颜色
-
-    // 定位展示的位置
-    public int position;
+    private ArrayList<String> pictureUris;                                           // 需要展示的集合
+    private ArrayList<String> userPickedSet;                                         // 图片选中的集合: 根据这个判断是否提供图片选择功能
+    private int threshold;// 阈值
+    private int indicatorTextColor = Color.WHITE;                                    // 指示器背景色
+    private int indicatorSolidColor = Color.parseColor("#ff64b6f6");     // 指示器选中的填充色
+    private int indicatorBorderCheckedColor = indicatorSolidColor;                   // 指示器边框选中的颜色
+    private int indicatorBorderUncheckedColor = Color.WHITE;                         // 指示器边框未被选中的颜色
+    private int position;                                                            // 定位展示的位置
 
     public WatcherConfig() {
-    }
-
-    public Builder newBuilder() {
-        return new Builder(this);
     }
 
     protected WatcherConfig(Parcel in) {
@@ -71,17 +76,47 @@ public class WatcherConfig implements Parcelable {
         return 0;
     }
 
-    public static final Creator<WatcherConfig> CREATOR = new Creator<WatcherConfig>() {
-        @Override
-        public WatcherConfig createFromParcel(Parcel in) {
-            return new WatcherConfig(in);
-        }
+    @NonNull
+    public ArrayList<String> getPictureUris() {
+        return pictureUris;
+    }
 
-        @Override
-        public WatcherConfig[] newArray(int size) {
-            return new WatcherConfig[size];
-        }
-    };
+    @Nullable
+    public ArrayList<String> getUserPickedSet() {
+        return userPickedSet;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public int getIndicatorTextColor() {
+        return indicatorTextColor;
+    }
+
+    public int getIndicatorSolidColor() {
+        return indicatorSolidColor;
+    }
+
+    public int getIndicatorBorderCheckedColor() {
+        return indicatorBorderCheckedColor;
+    }
+
+    public int getIndicatorBorderUncheckedColor() {
+        return indicatorBorderUncheckedColor;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public boolean isPickerSupport() {
+        return userPickedSet != null;
+    }
+
+    public Builder rebuild() {
+        return new Builder(this);
+    }
 
     public static class Builder {
 
@@ -126,15 +161,15 @@ public class WatcherConfig implements Parcelable {
         }
 
         /**
-         * 设置用户已经选中的图片, 相册会根据 Path 比较, 在相册中打钩
+         * 设置用户已经选中的图片, 会与 {@link #pictureUris} 比较, 在右上角打钩
+         * 若为 null, 则不提供图片选择的功能
          *
          * @param pickedPictures 已选中的图片
          */
-        public Builder setUserPickedSet(@NonNull ArrayList<String> pickedPictures) {
+        public Builder setUserPickedSet(@Nullable ArrayList<String> pickedPictures) {
             mConfig.userPickedSet = pickedPictures;
             return this;
         }
-
 
         /**
          * 设置选择索引的边框颜色

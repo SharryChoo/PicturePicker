@@ -18,33 +18,65 @@ public class CropConfig implements Parcelable {
         return new Builder();
     }
 
-    public String originFilePath;      // 需要裁剪的图片路径
-    public String cropDirectoryPath;   // 可用的输出目录
-    public boolean isCropCircle;       // 是否为圆形裁剪
-    public String authority;           // fileProvider 的 authority 属性, 用于 7.0 之后, 查找文件的 URI
-    public int aspectX = 1;            // 方形 X 的比率
-    public int aspectY = 1;            // 方形 X 的比率
-    public int outputX = 500;          // 图像输出时的宽
-    public int outputY = 500;          // 图像输出的高
-    public int destQuality = 80;       // 裁剪后图片输出的质量
+    public static final Creator<CropConfig> CREATOR = new Creator<CropConfig>() {
+        @Override
+        public CropConfig createFromParcel(Parcel in) {
+            return new CropConfig(in);
+        }
+
+        @Override
+        public CropConfig[] newArray(int size) {
+            return new CropConfig[size];
+        }
+    };
+
+    private String originFilePath;      // 需要裁剪的图片路径
+    private String cropDirectoryPath;   // 可用的输出目录
+    private boolean isCropCircle;       // 是否为圆形裁剪
+    private String authority;           // fileProvider 的 authority 属性, 用于 7.0 之后, 查找文件的 URI
+    private int aspectX = 1;            // 方形 X 的比率
+    private int aspectY = 1;            // 方形 X 的比率
+    private int outputX = 500;          // 图像输出时的宽
+    private int outputY = 500;          // 图像输出的高
+    private int destQuality = 80;       // 裁剪后图片输出的质量
 
     private CropConfig() {
     }
 
-    public Builder newBuilder() {
-        return new Builder(this);
+    public String getOriginFilePath() {
+        return originFilePath;
     }
 
-    protected CropConfig(Parcel in) {
-        originFilePath = in.readString();
-        cropDirectoryPath = in.readString();
-        isCropCircle = in.readByte() != 0;
-        authority = in.readString();
-        aspectX = in.readInt();
-        aspectY = in.readInt();
-        outputX = in.readInt();
-        outputY = in.readInt();
-        destQuality = in.readInt();
+    public String getCropDirectoryPath() {
+        return cropDirectoryPath;
+    }
+
+    public boolean isCropCircle() {
+        return isCropCircle;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public int getAspectX() {
+        return aspectX;
+    }
+
+    public int getAspectY() {
+        return aspectY;
+    }
+
+    public int getOutputX() {
+        return outputX;
+    }
+
+    public int getOutputY() {
+        return outputY;
+    }
+
+    public int getDestQuality() {
+        return destQuality;
     }
 
     @Override
@@ -65,17 +97,21 @@ public class CropConfig implements Parcelable {
         return 0;
     }
 
-    public static final Creator<CropConfig> CREATOR = new Creator<CropConfig>() {
-        @Override
-        public CropConfig createFromParcel(Parcel in) {
-            return new CropConfig(in);
-        }
+    public Builder rebuild() {
+        return new Builder(this);
+    }
 
-        @Override
-        public CropConfig[] newArray(int size) {
-            return new CropConfig[size];
-        }
-    };
+    protected CropConfig(Parcel in) {
+        originFilePath = in.readString();
+        cropDirectoryPath = in.readString();
+        isCropCircle = in.readByte() != 0;
+        authority = in.readString();
+        aspectX = in.readInt();
+        aspectY = in.readInt();
+        outputX = in.readInt();
+        outputY = in.readInt();
+        destQuality = in.readInt();
+    }
 
     /**
      * 构建 Config 对象

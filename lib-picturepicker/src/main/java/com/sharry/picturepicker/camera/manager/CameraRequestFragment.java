@@ -69,8 +69,8 @@ public class CameraRequestFragment extends Fragment {
     public void takePicture(CameraConfig config, CameraCallback callback) {
         this.mConfig = config;
         this.mCameraCallback = callback;
-        mTempFile = FileUtil.createTempFileByDestDirectory(config.cameraDirectoryPath);
-        Uri tempUri = FileUtil.getUriFromFile(mContext, mConfig.authority, mTempFile);
+        mTempFile = FileUtil.createTempFileByDestDirectory(config.getCameraDirectoryPath());
+        Uri tempUri = FileUtil.getUriFromFile(mContext, mConfig.getAuthority(), mTempFile);
         // 启动相机
         Intent intent = new Intent(INTENT_ACTION_START_CAMERA);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
@@ -85,8 +85,9 @@ public class CameraRequestFragment extends Fragment {
             case REQUEST_CODE_TAKE:
                 try {
                     // 1. 将拍摄后的图片, 压缩到 cameraDestFile 中
-                    File cameraDestFile = FileUtil.createCameraDestFile(mConfig.cameraDirectoryPath);
-                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), cameraDestFile.getAbsolutePath(), mConfig.cameraDestQuality);
+                    File cameraDestFile = FileUtil.createCameraDestFile(mConfig.getCameraDirectoryPath());
+                    PictureUtil.doCompress(mTempFile.getAbsolutePath(), cameraDestFile.getAbsolutePath(),
+                            mConfig.getCameraDestQuality());
                     // 2. 处理图片裁剪
                     if (mConfig.isCropSupport()) {
                         performCropPicture(cameraDestFile.getAbsolutePath());
@@ -113,9 +114,8 @@ public class CameraRequestFragment extends Fragment {
     private void performCropPicture(String cameraFilePath) {
         PictureCropManager.with(mContext)
                 .setConfig(
-                        mConfig.cropConfig.newBuilder()
+                        mConfig.getCropConfig().rebuild()
                                 .setOriginFile(cameraFilePath)// 需要裁剪的文件路径
-                                .setFileProviderAuthority(mConfig.authority)
                                 .build()
                 )
                 .crop(new CropCallback() {

@@ -71,17 +71,17 @@ public class PictureCropManager {
      */
     private void cropActual(@NonNull final CropCallback callback) {
         // 若未指定目的路径, 则在系统相册的路径下创建图片文件
-        if (mConfig.originFilePath == null) {
+        if (mConfig.getOriginFilePath() == null) {
             throw new UnsupportedOperationException(TAG + ".takeActual -> Please ensure crop " +
                     "target path is valuable.");
         }
         // 指定默认的裁剪路径
-        if (TextUtils.isEmpty(mConfig.cropDirectoryPath)) {
-            mConfig.cropDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
+        if (TextUtils.isEmpty(mConfig.getCropDirectoryPath())) {
+            mConfig.rebuild().setCropDirectory(FileUtil.createDefaultDirectory(mActivity).getAbsolutePath());
         }
         // 指定默认, FileProvider 的 authority
-        if (TextUtils.isEmpty(mConfig.authority)) {
-            mConfig.authority = FileUtil.getDefaultFileProviderAuthority(mActivity);
+        if (TextUtils.isEmpty(mConfig.getAuthority())) {
+            mConfig.rebuild().setFileProviderAuthority(FileUtil.getDefaultFileProviderAuthority(mActivity));
         }
         mCropFragment.cropPicture(mConfig, callback);
     }

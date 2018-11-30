@@ -105,7 +105,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             checkAndDisplayMatrix();
 
         /*
-         * Here we decide whether to let the ImageView's parent to start taking
+         * Here we decide whether to let the ImageView's parent to startForResult taking
          * over the touch event.
          *
          * First we check whether this function is enabled. We never want the

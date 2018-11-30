@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             }
             PicturePickerManager.with(this)
                     .setPickerConfig(
-                            pickerConfig.newBuilder()
+                            pickerConfig.rebuild()
                                     .isToolbarScrollable(cbAnimation.isChecked)
                                     .isFabScrollable(cbAnimation.isChecked)
                                     .setCameraConfig(

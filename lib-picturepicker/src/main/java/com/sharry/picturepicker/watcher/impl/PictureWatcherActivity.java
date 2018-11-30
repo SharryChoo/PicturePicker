@@ -4,10 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,8 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.support.loader.PictureLoader;
+import com.sharry.picturepicker.support.utils.VersionUtil;
+import com.sharry.picturepicker.watcher.manager.PictureWatcherFragment;
 import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 import com.sharry.picturepicker.widget.CheckedIndicatorView;
 import com.sharry.picturepicker.widget.DraggableViewPager;
@@ -30,6 +35,7 @@ import com.sharry.picturepicker.widget.toolbar.ViewOptions;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,86 +54,71 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         DraggableViewPager.OnPagerChangedListener {
 
     // 启动时的 Extra
-    public static final String START_EXTRA_CONFIG = "start_intent_extra_config";
-    public static final String START_EXTRA_SHARED_ELEMENT = "start_intent_extra_shared_element";
+    private static final String EXTRA_CONFIG = "start_intent_extra_config";
+    private static final String EXTRA_SHARED_ELEMENT = "start_intent_extra_shared_element";
 
     // 返回时的 Extra
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_extra_picked_pictures";// 返回的图片
     public static final String RESULT_EXTRA_IS_PICKED_ENSURE = "result_extra_is_picked_ensure";// 是否是确认选择
 
-    // Presenter
-    private PictureWatcherContract.IPresenter mPresenter = new PictureWatcherPresenter();
+    public static void startActivityForResult(@NonNull Activity request, @NonNull PictureWatcherFragment resultTo,
+                                              @NonNull WatcherConfig config, @Nullable View sharedElement) {
+        Intent intent = new Intent(request, PictureWatcherActivity.class);
+        intent.putExtra(PictureWatcherActivity.EXTRA_CONFIG, config);
+        // 5.0 以上的系统使用 Transition 跳转
+        if (VersionUtil.isLollipop()) {
+            ActivityOptions options;
+            if (sharedElement != null) {
+                // 共享元素
+                intent.putExtra(EXTRA_SHARED_ELEMENT, true);
+                String transitionKey = config.getPictureUris().get(config.getPosition());
+                sharedElement.setTransitionName(transitionKey);
+                options = ActivityOptions.makeSceneTransitionAnimation(request,
+                        Pair.create(sharedElement, transitionKey));
+            } else {
+                options = ActivityOptions.makeSceneTransitionAnimation(request);
+            }
+            // 带共享元素的启动
+            resultTo.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED, options.toBundle());
+        } else {
+            // 非共享元素的启动
+            resultTo.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED);
+            // 使用淡入淡出的效果
+            request.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+    }
 
+    // Presenter
+    private PictureWatcherContract.IPresenter mPresenter;
+
+    /*
+       Widgets
+     */
     private TextView mTvTitle;
     private CheckedIndicatorView mCheckIndicator;
     private DraggableViewPager mViewPager;
-
-    // 底部选中容器
     private LinearLayout mLlBottomPreviewContainer;
     private RecyclerView mBottomPreviewPictures;
     private TextView mTvEnsure;
-    private ArrayList<PhotoView> mPhotoViews = new ArrayList<>();// 图片对象
-    private WatcherPagerAdapter mWatcherPagerAdapter;// ViewPager 的 Adapter
+    private ArrayList<PhotoView> mPhotoViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter.attach(this);
-        parseIntent();
+        initPresenter();
         setContentView(R.layout.libpicturepicker_activity_picture_watcher);
         initTitle();
         initViews();
-        initData();
-    }
-
-    protected void parseIntent() {
-        mPresenter.init(
-                (WatcherConfig) getIntent().getParcelableExtra(START_EXTRA_CONFIG),
-                getIntent().getBooleanExtra(START_EXTRA_SHARED_ELEMENT, false)
-        );
-    }
-
-    protected void initTitle() {
-        SToolbar toolbar = findViewById(R.id.toolbar);
-        mTvTitle = toolbar.getTitleText();
-        // 添加右部的索引
-        mCheckIndicator = new CheckedIndicatorView(this);
-        toolbar.addRightMenuView(mCheckIndicator, new ViewOptions.Builder()
-                .setVisibility(View.INVISIBLE)
-                .setWidthExcludePadding(dp2px(this, 25))
-                .setHeightExcludePadding(dp2px(this, 25))
-                .setPaddingRight(dp2px(this, 10))
-                .setListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mPresenter.handleToolbarCheckedIndicatorClick(mCheckIndicator.isChecked());
-                    }
-                })
-                .build());
-    }
-
-    protected void initViews() {
-        // 1. 初始化 ViewPager
-        mViewPager = findViewById(R.id.view_pager);
-        mWatcherPagerAdapter = new WatcherPagerAdapter(mPhotoViews);
-        mViewPager.setAdapter(mWatcherPagerAdapter);
-        mViewPager.setOnPagerChangedListener(this);
-        // 2. 初始化底部菜单
-        mLlBottomPreviewContainer = findViewById(R.id.ll_bottom_container);
-        mBottomPreviewPictures = findViewById(R.id.recycle_pictures);
-        mBottomPreviewPictures.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false));
-        mTvEnsure = findViewById(R.id.tv_ensure);
-        mTvEnsure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.handleEnsureClick();
-            }
-        });
-    }
-
-    protected void initData() {
         mPresenter.start();
+    }
+
+    @Override
+    public void finish() {
+        // 处理 finish 之前的相关事宜
+        mPresenter.handleFinish();
+        super.finish();
+        // 当前 Activity 关闭时, 使用淡入淡出的动画
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
@@ -170,8 +161,8 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void createPhotoViews(ArrayList<String> pictureUris) {
-        for (String uri : pictureUris) {
+    public void createPhotoViews(int photoViewCount) {
+        for (int i = 0; i < photoViewCount; i++) {
             PhotoView photoView = new PhotoView(this);
             photoView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -183,7 +174,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
             });
             mPhotoViews.add(photoView);
         }
-        mWatcherPagerAdapter.notifyDataSetChanged();
+        mViewPager.setAdapter(new WatcherPagerAdapter(mPhotoViews));
     }
 
     @Override
@@ -299,21 +290,59 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void finish() {
-        // 设置回调
+    public void setResultBeforeFinish(@Nullable ArrayList<String> pickedPaths, boolean isEnsurePressed) {
         Intent intent = new Intent();
-        intent.putExtra(RESULT_EXTRA_PICKED_PICTURES, mPresenter.getUserPicked());
-        intent.putExtra(RESULT_EXTRA_IS_PICKED_ENSURE, mPresenter.isEnsurePressed());
+        intent.putExtra(RESULT_EXTRA_PICKED_PICTURES, pickedPaths);
+        intent.putExtra(RESULT_EXTRA_IS_PICKED_ENSURE, isEnsurePressed);
         setResult(RESULT_OK, intent);
-        super.finish();
-        // 当前 Activity 关闭时, 使用淡入淡出的动画
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    /**
-     * Dip convert 2 pixel
-     */
-    static int dp2px(Context context, float dp) {
+    private void initPresenter() {
+        mPresenter = new PictureWatcherPresenter(
+                this,
+                (WatcherConfig) getIntent().getParcelableExtra(EXTRA_CONFIG),
+                getIntent().getBooleanExtra(EXTRA_SHARED_ELEMENT, false)
+        );
+    }
+
+    private void initTitle() {
+        SToolbar toolbar = findViewById(R.id.toolbar);
+        mTvTitle = toolbar.getTitleText();
+        // 添加右部的索引
+        mCheckIndicator = new CheckedIndicatorView(this);
+        toolbar.addRightMenuView(mCheckIndicator, new ViewOptions.Builder()
+                .setVisibility(View.INVISIBLE)
+                .setWidthExcludePadding(dp2px(this, 25))
+                .setHeightExcludePadding(dp2px(this, 25))
+                .setPaddingRight(dp2px(this, 10))
+                .setListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mPresenter.handleToolbarCheckedIndicatorClick(mCheckIndicator.isChecked());
+                    }
+                })
+                .build());
+    }
+
+    private void initViews() {
+        // 1. 初始化 ViewPager
+        mViewPager = findViewById(R.id.view_pager);
+        mViewPager.setOnPagerChangedListener(this);
+        // 2. 初始化底部菜单
+        mLlBottomPreviewContainer = findViewById(R.id.ll_bottom_container);
+        mBottomPreviewPictures = findViewById(R.id.recycle_pictures);
+        mBottomPreviewPictures.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
+        mTvEnsure = findViewById(R.id.tv_ensure);
+        mTvEnsure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.handleEnsureClick();
+            }
+        });
+    }
+
+    private int dp2px(Context context, float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 context.getResources().getDisplayMetrics());
     }

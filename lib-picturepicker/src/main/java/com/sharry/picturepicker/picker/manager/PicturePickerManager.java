@@ -4,15 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
-import android.text.TextUtils;
 
 import com.sharry.picturepicker.picker.impl.PicturePickerActivity;
 import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
-import com.sharry.picturepicker.support.utils.FileUtil;
 
 import androidx.annotation.NonNull;
 
@@ -70,17 +67,14 @@ public class PicturePickerManager {
      * @param pickerCallback 图片选中的回调
      */
     public void start(@NonNull final PickerCallback pickerCallback) {
-        // 1. 验证是否实现了图片加载器
-        if (PictureLoader.getPictureLoader() == null) {
-            throw new UnsupportedOperationException("PictureLoader.load -> please invoke setPictureLoader first");
-        }
-        // 2. 验证权限
         PermissionsManager.getManager(mActivity)
                 .request(mPermissions)
                 .execute(new PermissionsCallback() {
                     @Override
                     public void onResult(boolean granted) {
-                        if (granted) startActual(pickerCallback);
+                        if (granted) {
+                            startActual(pickerCallback);
+                        }
                     }
                 });
     }
@@ -88,28 +82,25 @@ public class PicturePickerManager {
     /**
      * 处理 PicturePickerActivity 的启动
      */
-    private void startActual(PickerCallback pickerCallback) {
-        // 若开启了相机支持, 则创建目录
-        if (null != mConfig.cameraConfig) {
-            // 若用户没有设置拍照路径, 则给予默认路径
-            if (TextUtils.isEmpty(mConfig.cameraConfig.cameraDirectoryPath)) {
-                mConfig.cameraConfig.cameraDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
-            }
-        }
-        // 若开启了裁剪, 则只能选中一张图片
-        if (null != mConfig.cropConfig) {
-            mConfig.threshold = 1;
-            mConfig.userPickedSet = null;
-            // 若用户没有设置裁剪路径, 则给予默认路径
-            if (TextUtils.isEmpty(mConfig.cropConfig.cropDirectoryPath)) {
-                mConfig.cropConfig.cropDirectoryPath = FileUtil.createDefaultDirectory(mActivity).getAbsolutePath();
-            }
-        }
-        Intent intent = new Intent(mActivity, PicturePickerActivity.class);
-        // 用户已经选中的图片数量
-        intent.putExtra(PicturePickerActivity.START_EXTRA_CONFIG, mConfig);
+    private void startActual(@NonNull PickerCallback pickerCallback) {
+        verify();
+
         mPickerFragment.setPickerCallback(pickerCallback);
-        mPickerFragment.startActivityForResult(intent, PicturePickerFragment.REQUEST_CODE_PICKED);
+        PicturePickerActivity.startActivityForResult(mActivity, mPickerFragment, mConfig);
+    }
+
+    private void verify() {
+        // 1. 验证是否实现了图片加载器
+        if (PictureLoader.getPictureLoader() == null) {
+            throw new UnsupportedOperationException("PictureLoader.load -> please invoke setPictureLoader first");
+        }
+        // 2. 若开启了裁剪, 则只能选中一张图片
+        if (mConfig.isCropSupport()) {
+            mConfig.rebuild()
+                    .setThreshold(1)
+                    .setPickedPictures(null)
+                    .build();
+        }
     }
 
     /**
