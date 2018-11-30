@@ -2,16 +2,22 @@ package com.sharry.picturepicker.picker.manager;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 import com.sharry.picturepicker.picker.impl.PicturePickerActivity;
+import com.sharry.picturepicker.support.fragment.CallbackFragment;
 import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Sharry on 2018/6/13.
@@ -37,12 +43,10 @@ public class PicturePickerManager {
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
     private Activity mActivity;
-    private PicturePickerFragment mPickerFragment;
     private PickerConfig mConfig;
 
     private PicturePickerManager(@NonNull Activity activity) {
         this.mActivity = activity;
-        this.mPickerFragment = getCallbackFragment(mActivity);
     }
 
     /**
@@ -82,11 +86,31 @@ public class PicturePickerManager {
     /**
      * 处理 PicturePickerActivity 的启动
      */
-    private void startActual(@NonNull PickerCallback pickerCallback) {
+    private void startActual(@NonNull final PickerCallback pickerCallback) {
         verify();
-
-        mPickerFragment.setPickerCallback(pickerCallback);
-        PicturePickerActivity.startActivityForResult(mActivity, mPickerFragment, mConfig);
+        CallbackFragment callbackFragment = CallbackFragment.getInstance(mActivity);
+        callbackFragment.setCallback(new CallbackFragment.Callback() {
+            @Override
+            public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                if (resultCode != RESULT_OK || null == data) {
+                    return;
+                }
+                switch (requestCode) {
+                    case PicturePickerActivity.REQUEST_CODE:
+                        ArrayList<String> paths = data.getStringArrayListExtra(
+                                PicturePickerActivity.RESULT_EXTRA_PICKED_PICTURES);
+                        if (paths != null) {
+                            pickerCallback.onPickedComplete(paths);
+                        } else {
+                            Log.e(TAG, "Picked path from PicturePickerActivity is null.");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        PicturePickerActivity.startActivityForResult(mActivity, callbackFragment, mConfig);
     }
 
     private void verify() {
@@ -101,27 +125,6 @@ public class PicturePickerManager {
                     .setPickedPictures(null)
                     .build();
         }
-    }
-
-    /**
-     * 获取用于回调的 Fragment
-     */
-    private PicturePickerFragment getCallbackFragment(Activity activity) {
-        PicturePickerFragment pickerFragment = findCallbackFragment(activity);
-        if (pickerFragment == null) {
-            pickerFragment = PicturePickerFragment.newInstance();
-            FragmentManager fragmentManager = activity.getFragmentManager();
-            fragmentManager.beginTransaction().add(pickerFragment, TAG).commitAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
-        }
-        return pickerFragment;
-    }
-
-    /**
-     * 在 Activity 中通过 TAG 去寻找我们添加的 Fragment
-     */
-    private PicturePickerFragment findCallbackFragment(Activity activity) {
-        return (PicturePickerFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
 
 }

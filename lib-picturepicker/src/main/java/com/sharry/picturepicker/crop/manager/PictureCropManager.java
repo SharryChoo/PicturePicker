@@ -70,6 +70,11 @@ public class PictureCropManager {
      * 裁剪图片
      */
     private void cropActual(@NonNull final CropCallback callback) {
+        verify();
+        mCropFragment.cropPicture(mConfig, callback);
+    }
+
+    private void verify() {
         // 若未指定目的路径, 则在系统相册的路径下创建图片文件
         if (mConfig.getOriginFilePath() == null) {
             throw new UnsupportedOperationException(TAG + ".takeActual -> Please ensure crop " +
@@ -83,7 +88,6 @@ public class PictureCropManager {
         if (TextUtils.isEmpty(mConfig.getAuthority())) {
             mConfig.rebuild().setFileProviderAuthority(FileUtil.getDefaultFileProviderAuthority(mActivity));
         }
-        mCropFragment.cropPicture(mConfig, callback);
     }
 
     /**

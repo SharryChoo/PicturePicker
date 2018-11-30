@@ -69,6 +69,11 @@ public class CameraRequestManager {
     }
 
     private void takeActual(CameraCallback callback) {
+        verify();
+        mTakePhotoFragment.takePicture(mConfig, callback);
+    }
+
+    private void verify() {
         // 1. 若为指定照片默认输出路径, 给予指定默认的拍照路径
         if (TextUtils.isEmpty(mConfig.getCameraDirectoryPath())) {
             mConfig.rebuild().setCameraDirectory(FileUtil.createDefaultDirectory(mActivity).getAbsolutePath());
@@ -89,7 +94,6 @@ public class CameraRequestManager {
                         .setFileProviderAuthority(mConfig.getAuthority());
             }
         }
-        mTakePhotoFragment.takePicture(mConfig, callback);
     }
 
     /**
@@ -112,4 +116,5 @@ public class CameraRequestManager {
     private CameraRequestFragment findCallbackFragment(Activity activity) {
         return (CameraRequestFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
+
 }

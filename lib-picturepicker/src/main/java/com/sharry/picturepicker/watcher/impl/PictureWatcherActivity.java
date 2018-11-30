@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +25,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.utils.VersionUtil;
-import com.sharry.picturepicker.watcher.manager.PictureWatcherFragment;
 import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 import com.sharry.picturepicker.widget.CheckedIndicatorView;
 import com.sharry.picturepicker.widget.DraggableViewPager;
@@ -54,6 +54,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         DraggableViewPager.OnPagerChangedListener {
 
     // 启动时的 Extra
+    public static final int REQUEST_CODE = 508;
     private static final String EXTRA_CONFIG = "start_intent_extra_config";
     private static final String EXTRA_SHARED_ELEMENT = "start_intent_extra_shared_element";
 
@@ -61,7 +62,15 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_extra_picked_pictures";// 返回的图片
     public static final String RESULT_EXTRA_IS_PICKED_ENSURE = "result_extra_is_picked_ensure";// 是否是确认选择
 
-    public static void startActivityForResult(@NonNull Activity request, @NonNull PictureWatcherFragment resultTo,
+    /**
+     * U can launch this activity from here.
+     *
+     * @param request       请求的 Activity
+     * @param resultTo      PictureWatcherActivity 返回值的去向
+     * @param config        PictureWatcherActivity 的配置
+     * @param sharedElement 共享元素
+     */
+    public static void startActivityForResult(@NonNull Activity request, @NonNull Fragment resultTo,
                                               @NonNull WatcherConfig config, @Nullable View sharedElement) {
         Intent intent = new Intent(request, PictureWatcherActivity.class);
         intent.putExtra(PictureWatcherActivity.EXTRA_CONFIG, config);
@@ -79,10 +88,10 @@ public class PictureWatcherActivity extends AppCompatActivity implements
                 options = ActivityOptions.makeSceneTransitionAnimation(request);
             }
             // 带共享元素的启动
-            resultTo.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED, options.toBundle());
+            resultTo.startActivityForResult(intent, REQUEST_CODE, options.toBundle());
         } else {
             // 非共享元素的启动
-            resultTo.startActivityForResult(intent, PictureWatcherFragment.REQUEST_CODE_PICKED);
+            resultTo.startActivityForResult(intent, REQUEST_CODE);
             // 使用淡入淡出的效果
             request.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }

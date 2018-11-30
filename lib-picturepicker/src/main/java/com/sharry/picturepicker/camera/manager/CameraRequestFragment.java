@@ -43,7 +43,7 @@ public class CameraRequestFragment extends Fragment {
     private Context mContext;
     private CameraConfig mConfig;
     private CameraCallback mCameraCallback;
-    private File mTempFile;             // Temp file associated with camera.
+    private File mTempFile;                  // Temp file associated with camera.
 
     @Override
     public void onAttach(Context context) {

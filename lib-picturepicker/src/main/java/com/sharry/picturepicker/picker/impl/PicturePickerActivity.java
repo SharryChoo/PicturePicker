@@ -17,7 +17,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.picker.manager.PickerConfig;
-import com.sharry.picturepicker.picker.manager.PicturePickerFragment;
 import com.sharry.picturepicker.support.utils.ColorUtil;
 import com.sharry.picturepicker.support.utils.VersionUtil;
 import com.sharry.picturepicker.widget.PicturePickerFabBehavior;
@@ -48,8 +47,9 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     /*
        Constants.
      */
-    public static final String RESULT_EXTRA_PICKED_PICTURES = "result_intent_extra_picked_pictures";// 返回的图片
-    private static final String EXTRA_CONFIG = "start_intent_extra_config";// 用户配置的属性
+    public static final int REQUEST_CODE = 267;
+    public static final String RESULT_EXTRA_PICKED_PICTURES = "result_intent_extra_picked_pictures"; // 返回的图片
+    private static final String EXTRA_CONFIG = "start_intent_extra_config";                          // 用户配置的属性
 
     /**
      * U can launch PicturePickerActivity from here.
@@ -63,7 +63,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     public static void startActivityForResult(Activity from, Fragment resultTo, PickerConfig config) {
         Intent intent = new Intent(from, PicturePickerActivity.class);
         intent.putExtra(PicturePickerActivity.EXTRA_CONFIG, config);
-        resultTo.startActivityForResult(intent, PicturePickerFragment.REQUEST_CODE_PICKED);
+        resultTo.startActivityForResult(intent, REQUEST_CODE);
     }
 
     /*
@@ -80,7 +80,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
     // Content pictures
     private RecyclerView mRecyclePictures;
     // bottom navigation menu
-    private ViewGroup mMenuNaviContainer;
+    private ViewGroup mMenuNavContainer;
     private TextView mTvFolderName;
     private TextView mTvPreview;
     private RecyclerView mRecycleFolders;
@@ -279,7 +279,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         mRecyclePictures = findViewById(R.id.recycle_pictures);
 
         // Bottom navigation menu.
-        mMenuNaviContainer = findViewById(R.id.rv_menu_navi_container);
+        mMenuNavContainer = findViewById(R.id.rv_menu_nav_container);
         mTvFolderName = findViewById(R.id.tv_folder_name);
         mTvPreview = findViewById(R.id.tv_preview);
         mRecycleFolders = findViewById(R.id.recycle_folders);
@@ -318,11 +318,11 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
         BottomMenuNavigationCallback() {
             folderDrawable = mTvFolderName.getCompoundDrawables()[0];
             bgCollapsedColor = ContextCompat.getColor(PicturePickerActivity.this,
-                    R.color.libpricturepicker_picker_bottom_menu_navi_bg_collapsed_color);
+                    R.color.libpricturepicker_picker_bottom_menu_nav_bg_collapsed_color);
             bgExpandColor = ContextCompat.getColor(PicturePickerActivity.this,
                     R.color.libpricturepicker_picker_bottom_menu_navi_bg_expand_color);
             textCollapsedColor = ContextCompat.getColor(PicturePickerActivity.this,
-                    R.color.libpricturepicker_picker_bottom_menu_navi_text_collapsed_color);
+                    R.color.libpricturepicker_picker_bottom_menu_nav_text_collapsed_color);
             textExpandColor = ContextCompat.getColor(PicturePickerActivity.this,
                     R.color.libpricturepicker_picker_bottom_menu_navi_text_expand_color);
         }
@@ -337,7 +337,7 @@ public class PicturePickerActivity extends AppCompatActivity implements PictureP
             // Get background color associate with the bottom menu navigation bar.
             bgColor = ColorUtil.gradualChanged(fraction,
                     bgCollapsedColor, bgExpandColor);
-            mMenuNaviContainer.setBackgroundColor(bgColor);
+            mMenuNavContainer.setBackgroundColor(bgColor);
             // Get text color associate with the bottom menu  navigation bar.
             textColor = ColorUtil.gradualChanged(fraction,
                     textCollapsedColor, textExpandColor);

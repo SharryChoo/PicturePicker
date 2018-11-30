@@ -2,15 +2,18 @@ package com.sharry.picturepicker.watcher.manager;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
+import com.sharry.picturepicker.support.fragment.CallbackFragment;
 import com.sharry.picturepicker.support.loader.IPictureLoader;
 import com.sharry.picturepicker.support.loader.PictureLoader;
 import com.sharry.picturepicker.support.permission.PermissionsCallback;
 import com.sharry.picturepicker.support.permission.PermissionsManager;
 import com.sharry.picturepicker.watcher.impl.PictureWatcherActivity;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,12 +43,10 @@ public class PictureWatcherManager {
     };
     private Activity mActivity;
     private WatcherConfig mConfig;
-    private PictureWatcherFragment mWatcherFragment;
     private View mTransitionView;
 
     private PictureWatcherManager(Activity activity) {
         this.mActivity = activity;
-        this.mWatcherFragment = getCallbackFragment(mActivity);
     }
 
     /**
@@ -83,11 +84,7 @@ public class PictureWatcherManager {
      * 调用图片查看器, 一般用于相册
      */
     public void startForResult(@Nullable final WatcherCallback callback) {
-        // 1. 验证是否实现了图片加载器
-        if (PictureLoader.getPictureLoader() == null) {
-            throw new UnsupportedOperationException("PictureLoader.load -> please invoke setPictureLoader first");
-        }
-        // 2. 请求权限
+        // 请求权限
         PermissionsManager.getManager(mActivity)
                 .request(mPermissions)
                 .execute(new PermissionsCallback() {
@@ -104,29 +101,37 @@ public class PictureWatcherManager {
      * 真正执行 Activity 的启动
      */
     private void startForResultActual(@Nullable final WatcherCallback callback) {
-        mWatcherFragment.setPickerCallback(callback);
-        PictureWatcherActivity.startActivityForResult(mActivity, mWatcherFragment, mConfig, mTransitionView);
+        verify();
+        CallbackFragment callbackFragment = CallbackFragment.getInstance(mActivity);
+        callbackFragment.setCallback(new CallbackFragment.Callback() {
+            @Override
+            public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                if (resultCode != Activity.RESULT_OK || null == data || null == callback) {
+                    return;
+                }
+                switch (requestCode) {
+                    case PictureWatcherActivity.REQUEST_CODE:
+                        ArrayList<String> paths = data.getStringArrayListExtra(
+                                PictureWatcherActivity.RESULT_EXTRA_PICKED_PICTURES);
+                        boolean isEnsure = data.getBooleanExtra(
+                                PictureWatcherActivity.RESULT_EXTRA_IS_PICKED_ENSURE, false);
+                        callback.onWatcherPickedComplete(isEnsure, paths);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        PictureWatcherActivity.startActivityForResult(mActivity, callbackFragment, mConfig, mTransitionView);
     }
 
     /**
-     * 获取用于回调的 Fragment
+     * 验证 Activity 启动参数
      */
-    private PictureWatcherFragment getCallbackFragment(Activity activity) {
-        PictureWatcherFragment pictureWatcherFragment = findCallbackFragment(activity);
-        if (pictureWatcherFragment == null) {
-            pictureWatcherFragment = PictureWatcherFragment.newInstance();
-            FragmentManager fragmentManager = activity.getFragmentManager();
-            fragmentManager.beginTransaction().add(pictureWatcherFragment, TAG).commitAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
+    private void verify() {
+        if (PictureLoader.getPictureLoader() == null) {
+            throw new UnsupportedOperationException("PictureLoader.load -> please invoke setPictureLoader first");
         }
-        return pictureWatcherFragment;
-    }
-
-    /**
-     * 在 Activity 中通过 TAG 去寻找我们添加的 Fragment
-     */
-    private PictureWatcherFragment findCallbackFragment(Activity activity) {
-        return (PictureWatcherFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
 
 }

@@ -2,9 +2,9 @@
 <resources>
 
     <!--PicturePicker-->
-    <color name="libpricturepicker_picker_bottom_menu_navi_bg_collapsed_color">#a9000000</color>
+    <color name="libpricturepicker_picker_bottom_menu_nav_bg_collapsed_color">#a9000000</color>
     <color name="libpricturepicker_picker_bottom_menu_navi_bg_expand_color">#ffffffff</color>
-    <color name="libpricturepicker_picker_bottom_menu_navi_text_collapsed_color">#ffffffff</color>
+    <color name="libpricturepicker_picker_bottom_menu_nav_text_collapsed_color">#ffffffff</color>
     <color name="libpricturepicker_picker_bottom_menu_navi_text_expand_color">#ff333333</color>
     <color name="libpricturepicker_picker_bottom_menu_content_folders_bg_color">#ffffffff</color>
 
