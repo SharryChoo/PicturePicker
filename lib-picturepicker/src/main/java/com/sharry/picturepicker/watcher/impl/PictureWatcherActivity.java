@@ -4,13 +4,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
@@ -59,6 +62,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     private static final String EXTRA_SHARED_ELEMENT = "start_intent_extra_shared_element";
 
     // 返回时的 Extra
+    private static final String TAG = PictureWatcherActivity.class.getSimpleName();
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_extra_picked_pictures";// 返回的图片
     public static final String RESULT_EXTRA_IS_PICKED_ENSURE = "result_extra_is_picked_ensure";// 是否是确认选择
 
@@ -76,25 +80,51 @@ public class PictureWatcherActivity extends AppCompatActivity implements
         intent.putExtra(PictureWatcherActivity.EXTRA_CONFIG, config);
         // 5.0 以上的系统使用 Transition 跳转
         if (VersionUtil.isLollipop()) {
-            ActivityOptions options;
-            if (sharedElement != null) {
-                // 共享元素
-                intent.putExtra(EXTRA_SHARED_ELEMENT, true);
-                String transitionKey = config.getPictureUris().get(config.getPosition());
-                sharedElement.setTransitionName(transitionKey);
-                options = ActivityOptions.makeSceneTransitionAnimation(request,
-                        Pair.create(sharedElement, transitionKey));
-            } else {
-                options = ActivityOptions.makeSceneTransitionAnimation(request);
-            }
-            // 带共享元素的启动
-            resultTo.startActivityForResult(intent, REQUEST_CODE, options.toBundle());
+            // 携带共享元素跳转
+            String transitionKey = config.getPictureUris().get(0);
+            startActivityForResultInternalWithElement(request, resultTo, intent,
+                    transitionKey, sharedElement);
         } else {
-            // 非共享元素的启动
-            resultTo.startActivityForResult(intent, REQUEST_CODE);
-            // 使用淡入淡出的效果
-            request.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            // 正常跳转
+            startActivityForResultInternal(request, resultTo, intent);
         }
+    }
+
+    /**
+     * 携带共享元素启动当前 Activity
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static void startActivityForResultInternalWithElement(@NonNull Activity request, @NonNull Fragment resultTo,
+                                                                  @NonNull Intent intent, @NonNull String transitionKey,
+                                                                  @Nullable View sharedElement) {
+        ActivityOptions options;
+        if (sharedElement != null) {
+            // 共享元素
+            intent.putExtra(EXTRA_SHARED_ELEMENT, true);
+            sharedElement.setTransitionName(transitionKey);
+            options = ActivityOptions.makeSceneTransitionAnimation(request,
+                    Pair.create(sharedElement, transitionKey));
+        } else {
+            options = ActivityOptions.makeSceneTransitionAnimation(request);
+        }
+        // 带共享元素的启动
+        try {
+            resultTo.startActivityForResult(intent, REQUEST_CODE, options.toBundle());
+        } catch (Exception e) {
+            Log.e(TAG, "Launch PictureWatcherActivity with element failed.", e);
+            startActivityForResultInternal(request, resultTo, intent);
+        }
+    }
+
+    /**
+     * 启动当前 Activity
+     */
+    private static void startActivityForResultInternal(@NonNull Activity request, @NonNull Fragment resultTo,
+                                                       @NonNull Intent intent) {
+        // 非共享元素的启动
+        resultTo.startActivityForResult(intent, REQUEST_CODE);
+        // 使用淡入淡出的效果
+        request.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     // Presenter
