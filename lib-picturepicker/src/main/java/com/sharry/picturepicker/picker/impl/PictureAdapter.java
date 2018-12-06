@@ -131,7 +131,7 @@ class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mDisplayPaths.size() + (mConfig.isCropSupport() ? 1 : 0);
+        return mDisplayPaths.size() + (mConfig.isCameraSupport() ? 1 : 0);
     }
 
     /**
