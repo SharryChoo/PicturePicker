@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--SnackBar-->
+    <color name="libpricturepicker_component_snack_bar_background_color">#323232</color>
+
     <!--PicturePicker-->
     <color name="libpricturepicker_picker_bottom_menu_nav_bg_collapsed_color">#a9000000</color>
     <color name="libpricturepicker_picker_bottom_menu_navi_bg_expand_color">#ffffffff</color>

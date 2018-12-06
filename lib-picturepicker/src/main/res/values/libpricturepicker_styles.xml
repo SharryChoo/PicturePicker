@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="PicturePicker" />
+
+    <style name="PicturePicker.Component" />
+
+    <style name="PicturePicker.Component.Snackbar">
+        <item name="android:background">@drawable/libpicturepicker_component_snackbar_background</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
+</resources>

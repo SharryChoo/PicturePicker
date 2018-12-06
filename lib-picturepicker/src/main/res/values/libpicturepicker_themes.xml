@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">#FF00b0ff</item>
         <item name="colorAccent">#FF64b6f6</item>
         <!--Customize Snackbar style-->
-        <item name="snackbarStyle">@style/Widget.MaterialComponents.Snackbar</item>
+        <item name="snackbarStyle">@style/PicturePicker.Component.Snackbar</item>
     </style>
 
     <!--透明主题-->
@@ -16,7 +16,9 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
         <!--Customize Snackbar style-->
-        <item name="snackbarStyle">@style/Widget.MaterialComponents.Snackbar</item>
+        <item name="snackbarStyle">@style/PicturePicker.Component.Snackbar</item>
     </style>
+
+
 
 </resources>

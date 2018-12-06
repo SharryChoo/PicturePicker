@@ -104,11 +104,7 @@ public class CameraConfig implements Parcelable {
         }
 
         private Builder(@NonNull CameraConfig config) {
-            Builder();
-            mConfig.authority = config.authority;
-            mConfig.cameraDestQuality = config.cameraDestQuality;
-            mConfig.cameraDirectoryPath = config.cameraDirectoryPath;
-            mConfig.cropConfig = config.cropConfig;
+            this.mConfig = config;
         }
 
         /**
