@@ -20,7 +20,7 @@ Add it in your **module build.gradle** at the end of repositories
 ```
 dependencies {
     ...
-    implementation 'com.github.FrankChoo:PicturePicker:+'
+    implementation 'com.github.SharryChoo:PicturePicker:+'
     implementation 'com.android.support:appcompat-v7:27.+'
     implementation 'com.android.support:design:27.+'
     implementation 'com.android.support:recyclerview-v7:27.+'
