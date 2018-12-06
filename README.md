@@ -1,7 +1,7 @@
 # Current Version 
 [![](https://jitpack.io/v/FrankChoo/PicturePicker.svg)](https://jitpack.io/#FrankChoo/PicturePicker)
 - "-x" 表示使用的是 jetpack androidx 的依赖
-- 若使用 AppCompat 将 '-androidx' 后缀去除即可
+- 若使用 AppCompat 将 '-x' 后缀去除即可
 
 # How to integration
 ### Step 1
