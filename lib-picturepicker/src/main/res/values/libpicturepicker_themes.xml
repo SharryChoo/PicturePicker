@@ -2,9 +2,9 @@
 
     <style name="PicturePickerTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#FF00b0ff</item>
-        <item name="colorPrimaryDark">#FF00b0ff</item>
-        <item name="colorAccent">#FF64b6f6</item>
+        <item name="colorPrimary">@color/libpricturepicker_base_primary_color</item>
+        <item name="colorPrimaryDark">@color/libpricturepicker_base_primary_dark_color</item>
+        <item name="colorAccent">@color/libpricturepicker_base_accent_color</item>
         <!--Customize Snackbar style-->
         <item name="snackbarStyle">@style/PicturePicker.Component.Snackbar</item>
     </style>
@@ -18,7 +18,5 @@
         <!--Customize Snackbar style-->
         <item name="snackbarStyle">@style/PicturePicker.Component.Snackbar</item>
     </style>
-
-
 
 </resources>
