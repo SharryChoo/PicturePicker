@@ -1,7 +1,5 @@
 package com.sharry.picturepicker.watcher.impl;
 
-import android.transition.Transition;
-
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
@@ -15,27 +13,6 @@ import androidx.annotation.StringRes;
  */
 interface PictureWatcherContract {
     interface IView {
-
-        /**
-         * 设置页面进场动画
-         */
-        void setWindowEnterTransitions(Transition enterTransition);
-
-        /**
-         * 设置页面退场动画
-         */
-        void setWindowReturnTransitions(Transition returnTransition);
-
-        /**
-         * 设置共享元素进场动画
-         */
-        void setSharedElementEnterTransition(Transition enterTransition);
-
-        /**
-         * 设置共享元素退场动画
-         */
-        void setSharedElementReturnTransition(Transition returnTransition);
-
         /**
          * 展示 Toolbar 左部文本
          */
@@ -78,17 +55,14 @@ interface PictureWatcherContract {
         void displayPreviewEnsureText(CharSequence content);
 
         /**
+         * 执行共享元素动画
+         */
+        void displaySharedElementEnter(SharedElementData sharedElementData);
+
+        /**
          * 创建 PhotoViews
          */
         void createPhotoViews(int photoViewCount);
-
-        /**
-         * 绑定当前页面的共享元素
-         *
-         * @param position  共享元素位置
-         * @param sharedKey 共享的 key
-         */
-        void bindSharedElementView(int position, String sharedKey);
 
         /**
          * 展示指定位置的图片
@@ -97,11 +71,6 @@ interface PictureWatcherContract {
          * @param curPosition 指定位置的图片
          */
         void displayPictureAt(ArrayList<String> pictureUris, int curPosition);
-
-        /**
-         * 通知共享元素的变更了
-         */
-        void notifySharedElementChanged(int sharedPosition, String sharedKey);
 
         /**
          * 通知选中的图片被移除了
@@ -133,8 +102,15 @@ interface PictureWatcherContract {
 
         /**
          * 让图片预览滚动到指定位置
+         *
+         * @param position the position for scroll to.
          */
         void previewPicturesSmoothScrollToPosition(int position);
+
+        /**
+         * 处理 View 的 finish 操作
+         */
+        void finish();
 
         /**
          * 设置返回值在 finish 之前
@@ -144,7 +120,19 @@ interface PictureWatcherContract {
          */
         void setResultBeforeFinish(@Nullable ArrayList<String> pickedPaths, boolean isEnsurePressed);
 
-        void finish();
+        /**
+         * 展示共享元素入场动画
+         *
+         * @param elementData shared element data.
+         */
+        void showSharedElementEnter(SharedElementData elementData);
+
+        /**
+         * 展示共享元素退场动画
+         *
+         * @param elementData shared element data.
+         */
+        void showSharedElementExitAndFinish(SharedElementData elementData);
     }
 
 
@@ -153,7 +141,7 @@ interface PictureWatcherContract {
         /**
          * 获取数据
          */
-        void start();
+        void setup();
 
         /**
          * 处理页面的滑动
@@ -171,8 +159,13 @@ interface PictureWatcherContract {
         void handleToolbarCheckedIndicatorClick(boolean checked);
 
         /**
+         * 处理返回事件
+         */
+        void handleBackPressed();
+
+        /**
          * 处理 View 的 finish
          */
-        void handleFinish();
+        void handleSetResultBeforeFinish();
     }
 }

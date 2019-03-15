@@ -35,18 +35,31 @@ public class DraggableViewPager extends ViewPager {
     private static final int INVALIDATE_VALUE = -1;
     private int mSharedElementPosition = INVALIDATE_VALUE;
     private int mBackgroundColor = INVALIDATE_VALUE;
-    private float mFingerUpBackgroundAlpha = 1f;// 手指松开时, 当前ViewPager背景的透明度
+    private float mFingerUpBackgroundAlpha = 1f;              // 手指松开时, 当前 ViewPager 背景的透明度
 
     private float mDownX = 0f;
     private float mDownY = 0f;
-    private float mCapturedOriginY = 0f;// 被捕获的 View 的 Y 的起始点
-    private float mDragThresholdHeight = 0f;// 拖动到可以返回的阈值
-    private float mVerticalVelocityThreshold = 1000f;// 竖直方向上速度的阈值
+    private float mCapturedOriginY = 0f;                      // 被捕获的 View 的 Y 的起始点
+    private float mDragThresholdHeight = 0f;                  // 拖动到可以返回的阈值
+    private float mVerticalVelocityThreshold = 1000f;         // 竖直方向上速度的阈值
 
     private boolean mIsDragging = false;
     private boolean mIsAnimRunning = false;
 
     private VelocityTracker mVelocityTracker;
+
+    private Animator.AnimatorListener mRecoverListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+            mIsAnimRunning = true;
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mIsAnimRunning = false;
+        }
+    };
+
 
     public DraggableViewPager(Context context) {
         this(context, null);
@@ -61,7 +74,7 @@ public class DraggableViewPager extends ViewPager {
         // 速度捕获器
         mVelocityTracker = VelocityTracker.obtain();
         // 规定拖拽到消失的阈值
-        mDragThresholdHeight = getResources().getDisplayMetrics().heightPixels / 4;
+        mDragThresholdHeight = getResources().getDisplayMetrics().heightPixels >> 2;
     }
 
     public interface OnPagerChangedListener {
@@ -90,7 +103,7 @@ public class DraggableViewPager extends ViewPager {
     }
 
     /**
-     * 设置了共享的位置
+     * 设置了共享的位置, 若当前位置为共享元素位置, 则忽略自身的退出动画
      */
     public void setSharedElementPosition(int position) {
         this.mSharedElementPosition = position;
@@ -115,7 +128,9 @@ public class DraggableViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (mIsAnimRunning) return false;
+        if (mIsAnimRunning) {
+            return false;
+        }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = ev.getRawX();
@@ -132,6 +147,8 @@ public class DraggableViewPager extends ViewPager {
                 } else {
                     mIsDragging = false;
                 }
+            default:
+                break;
         }
         try {
             return super.onInterceptTouchEvent(ev);
@@ -152,8 +169,10 @@ public class DraggableViewPager extends ViewPager {
                 mCapturedOriginY = getCurrentView().getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                float deltaY = (ev.getRawY() - mDownY) / 5;// 添加阻尼感
+                // 根据手指计算 View 的位置
+                float deltaY = (ev.getRawY() - mDownY) / 5;
                 getCurrentView().setY(mCapturedOriginY + deltaY);
+                // 根据手指计算当前 ViewPager 背景的透明度
                 mFingerUpBackgroundAlpha = 1 - (Math.abs(deltaY) / mDragThresholdHeight);
                 setBackgroundColor(alphaColor(getBaseColor(), mFingerUpBackgroundAlpha));
                 break;
@@ -169,6 +188,8 @@ public class DraggableViewPager extends ViewPager {
                 }
                 mVelocityTracker.recycle();
                 mIsDragging = false;
+                break;
+            default:
                 break;
         }
         return true;
@@ -197,7 +218,9 @@ public class DraggableViewPager extends ViewPager {
      * 恢复到原位
      */
     private void recover() {
-        if (isInvalidateCurrentView()) return;
+        if (isInvalidateCurrentView()) {
+            return;
+        }
         ValueAnimator recoverAnim = ValueAnimator.ofFloat(getCurrentView().getY(), mCapturedOriginY).setDuration(300);
         recoverAnim.setInterpolator(new OvershootInterpolator(3f));
         recoverAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -205,21 +228,14 @@ public class DraggableViewPager extends ViewPager {
             public void onAnimationUpdate(ValueAnimator animation) {
                 float curY = (float) animation.getAnimatedValue();
                 getCurrentView().setY(curY);
-                setBackgroundColor(alphaColor(getBaseColor(), mFingerUpBackgroundAlpha
-                        + (1 - mFingerUpBackgroundAlpha) * animation.getAnimatedFraction()));
+                setBackgroundColor(
+                        alphaColor(
+                                getBaseColor(),
+                                mFingerUpBackgroundAlpha + (1 - mFingerUpBackgroundAlpha) * animation.getAnimatedFraction())
+                );
             }
         });
-        recoverAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mIsAnimRunning = true;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mIsAnimRunning = false;
-            }
-        });
+        recoverAnim.addListener(mRecoverListener);
         recoverAnim.start();
     }
 
@@ -227,7 +243,10 @@ public class DraggableViewPager extends ViewPager {
      * 滑动超过阈值时消失
      */
     private void dismiss() {
-        if (isInvalidateCurrentView()) return;
+        if (isInvalidateCurrentView()) {
+            return;
+        }
+        // 若为共享元素所在位置, 则使用共享元素的动画
         if (getCurrentItem() == mSharedElementPosition) {
             ((Activity) getContext()).onBackPressed();
             return;
@@ -241,7 +260,8 @@ public class DraggableViewPager extends ViewPager {
             public void onAnimationUpdate(ValueAnimator animation) {
                 float curY = (float) animation.getAnimatedValue();
                 getCurrentView().setY(curY);
-                setBackgroundColor(alphaColor(getBaseColor(), mFingerUpBackgroundAlpha * (1 - animation.getAnimatedFraction())));
+                setBackgroundColor(alphaColor(getBaseColor(), mFingerUpBackgroundAlpha
+                        * (1 - animation.getAnimatedFraction())));
             }
         });
         dismissAnim.addListener(new AnimatorListenerAdapter() {
@@ -273,8 +293,12 @@ public class DraggableViewPager extends ViewPager {
      * @param alphaPercent: 0 代表全透明, 1 代表不透明
      */
     private int alphaColor(int baseColor, float alphaPercent) {
-        if (alphaPercent > 1) alphaPercent = 1;
-        if (alphaPercent < 0) alphaPercent = 0;
+        if (alphaPercent > 1) {
+            alphaPercent = 1;
+        }
+        if (alphaPercent < 0) {
+            alphaPercent = 0;
+        }
         int baseAlpha = (baseColor & 0xff000000) >>> 24;
         int alpha = (int) (baseAlpha * alphaPercent);
         return alpha << 24 | (baseColor & 0xffffff);
@@ -285,11 +309,8 @@ public class DraggableViewPager extends ViewPager {
      */
     private static final class DelegatePagerAdapter extends PagerAdapter {
 
-        // 记录当前的 View
         private View mCurrentView;
-        // 原始的 Adapter
         private PagerAdapter mOriginAdapter;
-        // 注册代理监听器
         private DataSetObserver mObserver = new DataSetObserver() {
             @Override
             public void onChanged() {

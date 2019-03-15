@@ -38,7 +38,7 @@ class WatcherPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * 实例化 ViewPager 容器中指定的 position 位置需要显示的 View 对象
+     * 实例化 ViewPager 容器中指定的 sharedPosition 位置需要显示的 View 对象
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
@@ -48,7 +48,7 @@ class WatcherPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * 在ViewPager中移除指定的 position 位置的 view 对象
+     * 在ViewPager中移除指定的 sharedPosition 位置的 view 对象
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
