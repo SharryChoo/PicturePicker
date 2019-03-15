@@ -11,22 +11,26 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
- * Created by Sharry on 2018/7/20.
- * Email: SharryChooCHN@Gmail.com
- * Version: 1.0
- * Description:
+ * The presenter associated with PictureWatcher.
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.0
+ * @since 2019/3/15 21:56
  */
 class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, WatcherPreviewAdapter.AdapterInteraction {
 
+    /**
+     * Final fields.
+     */
     private final PictureWatcherContract.IView mView;
     private final WatcherConfig mConfig;
     private final ArrayList<String> mDisplayPaths;
     private final ArrayList<String> mPickedPaths;
-    private final SharedElementData mSharedElementData;        // 共享元素数据
+    private final SharedElementData mSharedElementData;
 
-    private int mCurPosition;                                  // 当前展示的图片
-    private String mCurDisplayPath;                            // 当前展示的图片地址
-    private boolean mIsEnsurePressed = false;                  // 是否按压了确认
+    private int mCurPosition;
+    private String mCurDisplayPath;
+    private boolean mIsEnsurePressed = false;
 
     PictureWatcherPresenter(PictureWatcherContract.IView view, WatcherConfig config, SharedElementData sharedElementData) {
         this.mView = view;
@@ -140,12 +144,11 @@ class PictureWatcherPresenter implements PictureWatcherContract.IPresenter, Watc
 
     @Override
     public void handleBackPressed() {
-//        if (mSharedElementData != null && mCurPosition == mSharedElementData.sharedPosition) {
-//            mView.showSharedElementExitAndFinish(mSharedElementData);
-//        } else {
-//            mView.finish();
-//        }
-        mView.finish();
+        if (mSharedElementData != null && mCurPosition == mSharedElementData.sharedPosition) {
+            mView.showSharedElementExitAndFinish(mSharedElementData);
+        } else {
+            mView.finish();
+        }
     }
 
     @Override

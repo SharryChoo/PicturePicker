@@ -55,11 +55,6 @@ interface PictureWatcherContract {
         void displayPreviewEnsureText(CharSequence content);
 
         /**
-         * 执行共享元素动画
-         */
-        void displaySharedElementEnter(SharedElementData sharedElementData);
-
-        /**
          * 创建 PhotoViews
          */
         void createPhotoViews(int photoViewCount);
