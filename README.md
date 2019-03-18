@@ -1,9 +1,9 @@
-# Current Version 
+## Current Version 
 [![](https://jitpack.io/v/FrankChoo/PicturePicker.svg)](https://jitpack.io/#FrankChoo/PicturePicker)
 - androidx 表示使用的是 jetpack androidx 的依赖
 - 若使用 AppCompat 将 '-androidx' 后缀去除即可
 
-# How to integration
+## How to integration
 ### Step 1
 Add it in your **root build.gradle** at the end of repositories
 ```
@@ -20,36 +20,36 @@ Add it in your **module build.gradle** at the end of repositories
 ```
 dependencies {
     ...
-    implementation 'com.github.SharryChoo:PicturePicker:+'
+    implementation 'com.github.FrankChoo:PicturePicker:+'
     implementation 'com.android.support:appcompat-v7:27.+'
     implementation 'com.android.support:design:27.+'
     implementation 'com.android.support:recyclerview-v7:27.+'
 }
 ```
 
-# Preview([图片无法显示](http://note.youdao.com/noteshare?id=ee9a0d7909afc4e66b6dda57df10eda6&sub=125F838B572242DBA6B85FE66D89F77C))
-- 图片裁剪
-  - ![图片裁剪.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2ccf5f4fa?w=282&h=500&f=gif&s=4452628)
+## Preview([图片无法显示](http://note.youdao.com/noteshare?id=ee9a0d7909afc4e66b6dda57df10eda6&sub=125F838B572242DBA6B85FE66D89F77C))
+### 图片裁剪
+![图片裁剪.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2ccf5f4fa?w=282&h=500&f=gif&s=4452628)
 
-- 权限与拍照
-  - ![权限与拍照.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2cfcacddc?w=282&h=500&f=gif&s=3251641)
+### 权限与拍照
+![权限与拍照.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2cfcacddc?w=282&h=500&f=gif&s=3251641)
 
-- Material Design 动画
-  - ![Material Design 动画.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2cfd00353?w=282&h=500&f=gif&s=3963525)
+### Material Design 动画
+![Material Design 动画.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2cfd00353?w=282&h=500&f=gif&s=3963525)
 
-- 共享元素跳转
-  - ![共享元素跳转.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2d58d7b01?w=282&h=500&f=gif&s=4602043)
+### 共享元素跳转
+![共享元素跳转.gif](https://user-gold-cdn.xitu.io/2018/8/6/1650cff2d58d7b01?w=282&h=500&f=gif&s=4602043)
 
-# How to use
-1. 图片选择器(集成了拍照和裁剪)
+## How to use
+### 图片选择器(集成了拍照和裁剪)
 ```
-// Create an instance of PickerConfig.
+// 1. Create an instance of PickerConfig.
 val pickerConfig = PickerConfig.Builder()
         .setThreshold(etAlbumThreshold.text.toString().toInt())    // 一共选中的数量
         .setSpanCount(etSpanCount.text.toString().toInt())         // 每行展示的数目
         .isToolbarScrollable(true)                                 // Toolbar Behavior 动画
         .isFabScrollable(true)                                     // Fab Behavior 动画
-        .setToolbarBackgroundColor(
+        .setToolbarBackgroundColor( 
                 ContextCompat.getColor(this, R.color.colorPrimary)
         )                                                          // Toolbar 背景设置
         .setIndicatorSolidColor(
@@ -65,7 +65,8 @@ val pickerConfig = PickerConfig.Builder()
         .setCameraConfig(...)                                      // 设置相机配置, null 表示不启用拍照功能
         .setsetCropConfig(...)                                     // 设置裁剪配置, null 表示不启用裁剪功能
         .build()
-// Launch picture picker.
+        
+// 2. Launch picture picker.
 PicturePickerManager.with(context)
         // 传入我们上面构建的 pickerConfig.
         .setPickerConfig(
@@ -75,16 +76,16 @@ PicturePickerManager.with(context)
                         .build()
         )
         // 注入图片加载器
-        .setPictureLoader { context, uri, imageView ->
+        .setPictureLoader { context, uri, imageView ->   
             Glide.with(context).load(uri).into(imageView)
         }
-        .start {
+        .start { 
              it.forEach { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
         }
 ```
-2. 相机(集成了裁剪)
+### 相机(集成了裁剪)
 ```
-// Create an instance of CameraConfig
+// 1. Create an instance of CameraConfig
 val cameraConfig = CameraConfig.Builder()
         .setFileProviderAuthority("$packageName.FileProvider")  // 指定 FileProvider 的 authority, 用于 7.0 获取文件 URI
         .setCameraDirectory(APP_DIRECTORY)                      // 拍照后的图片输出路径
@@ -92,7 +93,7 @@ val cameraConfig = CameraConfig.Builder()
         .setCropConfig(...)                                     // 设置裁剪配置, null 表示不启用裁剪功能
         .build()
 
-// Launch camera take.
+// 2. Launch camera take.
 CameraRequestManager.with(context)
         .setConfig(
             // 对 cameraConfig 进行二次编辑
@@ -102,10 +103,10 @@ CameraRequestManager.with(context)
         .take { takePath ->
             Toast.makeText(this, takePath, Toast.LENGTH_SHORT).show()
         }
+```  
+### 裁剪
 ```
-3. 裁剪
-```
-// Create an instance of CropConfig
+// 1. Create an instance of CropConfig
 val cropConfig = CropConfig.Builder()
         .setFileProviderAuthority("$packageName.FileProvider")   // 指定 FileProvider 的 authority, 用于 7.0 获取文件 URI
         .setCropDirectory(APP_DIRECTORY)                         // 裁剪后的图片输出路径
@@ -113,7 +114,7 @@ val cropConfig = CropConfig.Builder()
         .setCropQuality(80)                                      // 裁剪后图片输出质量
         .build()
 
-// Launch crop page.
+// 2. Launch crop page.
 PictureCropManager.with((Context) mView)
         .setConfig(
             // 对 cropConfig 进行二次编辑
@@ -122,9 +123,9 @@ PictureCropManager.with((Context) mView)
         )
         .crop(this);
 ```
-4. 图片查看器
+### 图片查看器
 ```
-// Create an instance of WatcherConfig
+// 1. Create an instance of WatcherConfig
 val watcherConfig = WatcherConfig.Builder()
         .setThreshold(mPickerConfig.getThreshold())                      // 图片查看器可选图片最大数量
         .setIndicatorTextColor(mPickerConfig.getIndicatorTextColor())    // 指示器文本颜色
@@ -137,7 +138,7 @@ val watcherConfig = WatcherConfig.Builder()
         .setUserPickedSet(mModel.getPickedPaths())                       // 已经选中的图片集合, 传 null, 表示不支持图片选取功能
         .build()
 
-// Launch picture watcher.
+// 2. Launch picture watcher.
 PictureWatcherManager.with((Context) mView)
         .setSharedElement(sharedElement)                                 // 共享元素动画
         .setPictureLoader(PictureLoader.getPictureLoader())              // 图片加载器
@@ -148,5 +149,5 @@ PictureWatcherManager.with((Context) mView)
                 .build()
         )
         .startForResult(this)/.start();
-
+    
 ```
