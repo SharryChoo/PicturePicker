@@ -25,11 +25,11 @@ public class SharedElementData implements Parcelable {
         return result;
     }
 
-    int startX;
-    int startY;
-    int width;
-    int height;
-    int sharedPosition;
+    public int startX;
+    public int startY;
+    public int width;
+    public int height;
+    public int sharedPosition;
 
     private SharedElementData() {
 
@@ -57,6 +57,17 @@ public class SharedElementData implements Parcelable {
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return "SharedElementData{" +
+                "startX=" + startX +
+                ", startY=" + startY +
+                ", width=" + width +
+                ", height=" + height +
+                ", sharedPosition='" + sharedPosition + '\'' +
+                '}';
+    }
+
     public static final Creator<SharedElementData> CREATOR = new Creator<SharedElementData>() {
         @Override
         public SharedElementData createFromParcel(Parcel in) {
@@ -69,14 +80,4 @@ public class SharedElementData implements Parcelable {
         }
     };
 
-    @Override
-    public String toString() {
-        return "SharedElementData{" +
-                "startX=" + startX +
-                ", startY=" + startY +
-                ", width=" + width +
-                ", height=" + height +
-                ", sharedPosition='" + sharedPosition + '\'' +
-                '}';
-    }
 }

@@ -1,4 +1,4 @@
-package com.sharry.picturepicker.watcher.impl;
+package com.sharry.picturepicker.support.utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+import com.sharry.picturepicker.watcher.impl.SharedElementData;
 import com.sharry.picturepicker.widget.photoview.PhotoView;
 
 /**
@@ -84,7 +85,7 @@ public class SharedElementUtils {
                 ObjectAnimator.ofFloat(target, "translationX", data.startX - locations[0], 0),
                 ObjectAnimator.ofFloat(target, "translationY", data.startY - locations[1], 0)
         );
-        enterAnimators.setInterpolator(new OvershootInterpolator(2f));
+        enterAnimators.setInterpolator(new OvershootInterpolator(1f));
         enterAnimators.setDuration(500);
         return enterAnimators;
     }
@@ -111,7 +112,7 @@ public class SharedElementUtils {
                 )
         );
         exitAnimators.playTogether(boundsAnim, matrixAnim);
-        exitAnimators.setDuration(400);
+        exitAnimators.setDuration(350);
         exitAnimators.setInterpolator(new DecelerateInterpolator());
         return exitAnimators;
     }

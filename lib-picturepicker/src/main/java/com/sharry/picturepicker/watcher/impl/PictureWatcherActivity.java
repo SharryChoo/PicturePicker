@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.sharry.picturepicker.R;
 import com.sharry.picturepicker.support.loader.PictureLoader;
+import com.sharry.picturepicker.support.utils.SharedElementUtils;
 import com.sharry.picturepicker.watcher.manager.WatcherConfig;
 import com.sharry.picturepicker.widget.CheckedIndicatorView;
 import com.sharry.picturepicker.widget.DraggableViewPager;

@@ -14,7 +14,6 @@ import com.sharry.picturepicker.crop.manager.CropConfig
 import com.sharry.picturepicker.picker.manager.PickerConfig
 import com.sharry.picturepicker.picker.manager.PicturePickerManager
 import com.sharry.picturepicker.widget.toolbar.SToolbar
-import frank.demo.photopicker.R
 import kotlinx.android.synthetic.main.app_activity_main.*
 import java.io.File
 
