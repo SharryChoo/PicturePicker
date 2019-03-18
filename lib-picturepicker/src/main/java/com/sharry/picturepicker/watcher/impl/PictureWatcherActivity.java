@@ -54,6 +54,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     public static final String RESULT_EXTRA_PICKED_PICTURES = "result_extra_picked_pictures";
     public static final String RESULT_EXTRA_IS_PICKED_ENSURE = "result_extra_is_picked_ensure";
 
+
     /**
      * U can launch this activity from here.
      *
@@ -94,8 +95,13 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     private LinearLayout mLlBottomPreviewContainer;
     private RecyclerView mBottomPreviewPictures;
     private TextView mTvEnsure;
-
     private ArrayList<PhotoView> mPhotoViews = new ArrayList<>();
+
+    /**
+     * The animator for bottom preview.
+     */
+    private ObjectAnimator mBottomPreviewShowAnimator;
+    private ObjectAnimator mBottomPreviewDismissAnimator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -245,27 +251,41 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void setBottomPreviewVisibility(boolean nowVisible, final boolean destVisible) {
-        if (nowVisible == destVisible) {
+    public void showBottomPreview() {
+        if (mLlBottomPreviewContainer.getVisibility() == View.VISIBLE) {
             return;
         }
-        int startY = nowVisible ? 0 : mLlBottomPreviewContainer.getHeight();
-        int endY = nowVisible ? mLlBottomPreviewContainer.getHeight() : 0;
-        ObjectAnimator animator = ObjectAnimator.ofFloat(mLlBottomPreviewContainer,
-                "translationY", startY, endY);
-        animator.setDuration(200);
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mLlBottomPreviewContainer.setVisibility(View.VISIBLE);
-            }
+        if (mBottomPreviewShowAnimator == null) {
+            mBottomPreviewShowAnimator = ObjectAnimator.ofFloat(mLlBottomPreviewContainer,
+                    "translationY", mLlBottomPreviewContainer.getHeight(), 0);
+            mBottomPreviewShowAnimator.setDuration(200);
+            mBottomPreviewShowAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mLlBottomPreviewContainer.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+        mBottomPreviewShowAnimator.start();
+    }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mLlBottomPreviewContainer.setVisibility(destVisible ? View.VISIBLE : View.INVISIBLE);
-            }
-        });
-        animator.start();
+    @Override
+    public void dismissBottomPreview() {
+        if (mLlBottomPreviewContainer.getVisibility() == View.INVISIBLE) {
+            return;
+        }
+        if (mBottomPreviewDismissAnimator == null) {
+            mBottomPreviewDismissAnimator = ObjectAnimator.ofFloat(mLlBottomPreviewContainer,
+                    "translationY", 0, mLlBottomPreviewContainer.getHeight());
+            mBottomPreviewDismissAnimator.setDuration(200);
+            mBottomPreviewDismissAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLlBottomPreviewContainer.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+        mBottomPreviewDismissAnimator.start();
     }
 
     @Override
