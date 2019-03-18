@@ -2,22 +2,17 @@ package com.sharry.picturepicker.watcher.impl;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.os.Bundle;
-import android.util.Property;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -166,61 +161,18 @@ public class PictureWatcherActivity extends AppCompatActivity implements
             @Override
             public boolean onPreDraw() {
                 target.getViewTreeObserver().removeOnPreDrawListener(this);
-                // Set initial data.
-                int[] locations = new int[2];
-                target.getLocationOnScreen(locations);
-                target.setPivotX(0);
-                target.setPivotY(0);
-                target.setScaleX(data.width / (float) target.getWidth());
-                target.setScaleY(data.height / (float) target.getHeight());
-                target.setTranslationX(data.startX - locations[0]);
-                target.setTranslationY(data.startY - locations[1]);
-                // Perform animator.
-                target.animate()
-                        .scaleX(1)
-                        .scaleY(1)
-                        .translationX(0)
-                        .translationY(0)
-                        .setInterpolator(new OvershootInterpolator(3f))
-                        .setDuration(500);
+                // Execute enter animator.
+                SharedElementUtils.createSharedElementEnterAnimator(target, data).start();
                 return true;
             }
         });
     }
 
-    /**
-     * Thanks for google framework sources, {@link android.transition.ChangeImageTransform}
-     */
-    private static Property<PhotoView, Matrix> ANIMATED_TRANSFORM_PROPERTY
-            = new Property<PhotoView, Matrix>(Matrix.class, "animatedTransform") {
-        @Override
-        public void set(PhotoView photoView, Matrix matrix) {
-            photoView.animateTransform(matrix);
-        }
-
-        @Override
-        public Matrix get(PhotoView object) {
-            return null;
-        }
-    };
-
     @Override
     public void showSharedElementExitAndFinish(SharedElementData data) {
         final PhotoView target = mPhotoViews.get(data.sharedPosition);
-        float scaleX = data.width / (float) target.getDrawable().getIntrinsicWidth();
-        float scaleY = data.height / (float) target.getDrawable().getIntrinsicHeight();
-        AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator xAnim = ObjectAnimator.ofFloat(target, "x", target.getX(), data.startX);
-        ObjectAnimator yAnim = ObjectAnimator.ofFloat(target, "y", target.getY(), data.startY);
-        Matrix startMatrix = target.getImageMatrix();
-        Matrix destMatrix = new Matrix();
-        destMatrix.setScale(scaleX, scaleY);
-        ObjectAnimator matrixAnim = ObjectAnimator.ofObject(target, ANIMATED_TRANSFORM_PROPERTY,
-                new MatrixEvaluator(), startMatrix, destMatrix);
-        animatorSet.playTogether(xAnim, yAnim, matrixAnim);
-        animatorSet.setDuration(400);
-        animatorSet.setInterpolator(new OvershootInterpolator(1f));
-        animatorSet.addListener(new AnimatorListenerAdapter() {
+        Animator exitAnim = SharedElementUtils.createSharedElementExitAnimator(target, data);
+        exitAnim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 mViewPager.setBackgroundColor(Color.TRANSPARENT);
@@ -231,7 +183,7 @@ public class PictureWatcherActivity extends AppCompatActivity implements
                 finish();
             }
         });
-        animatorSet.start();
+        exitAnim.start();
     }
 
     @Override
@@ -381,27 +333,6 @@ public class PictureWatcherActivity extends AppCompatActivity implements
     private int dp2px(Context context, float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 context.getResources().getDisplayMetrics());
-    }
-
-    public static class MatrixEvaluator implements TypeEvaluator<Matrix> {
-
-        float[] mTempStartValues = new float[9];
-
-        float[] mTempEndValues = new float[9];
-
-        Matrix mTempMatrix = new Matrix();
-
-        @Override
-        public Matrix evaluate(float fraction, Matrix startValue, Matrix endValue) {
-            startValue.getValues(mTempStartValues);
-            endValue.getValues(mTempEndValues);
-            for (int i = 0; i < 9; i++) {
-                float diff = mTempEndValues[i] - mTempStartValues[i];
-                mTempEndValues[i] = mTempStartValues[i] + (fraction * diff);
-            }
-            mTempMatrix.setValues(mTempEndValues);
-            return mTempMatrix;
-        }
     }
 
 }
