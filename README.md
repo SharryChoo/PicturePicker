@@ -1,3 +1,6 @@
+## 注
+PicturePicker 不再维护, 若需要音视频等更多的功能支持, 请移步置 [SAlbum](https://github.com/SharryChoo/SAlbum)
+
 ## Current Version 
 [![](https://jitpack.io/v/FrankChoo/PicturePicker.svg)](https://jitpack.io/#FrankChoo/PicturePicker)
 - -x 表示使用的是 jetpack androidx 的依赖
